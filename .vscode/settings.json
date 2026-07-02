@@ -1,0 +1,10 @@
+{
+  "go.goroot": "/home/toby/.local/share/mise/installs/go/1.26.4",
+  "debug.javascript.defaultRuntimeExecutable": {
+    "pwa-node": "/home/toby/.local/share/mise/shims/node"
+  },
+  "go.alternateTools": {
+    "go": "/home/toby/.local/share/mise/shims/go",
+    "gopls": "/home/toby/.local/share/mise/shims/gopls"
+  }
+}
