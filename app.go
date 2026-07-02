@@ -4,6 +4,10 @@ import (
 	"context"
 	"fmt"
 	"hoshino-downloader/tools"
+	"hoshino-downloader/utils"
+	"os"
+
+	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
 // App struct
@@ -18,16 +22,35 @@ func NewApp() *App {
 
 // startup is called when the app starts. The context is saved
 // so we can call the runtime methods
-func (a *App) startup(ctx context.Context) {
-	a.ctx = ctx
+func (app *App) startup(ctx context.Context) {
+	app.ctx = ctx
+	toolsFolder, err := tools.GetToolsFolder()
+	if err != nil {
+		panic(err)
+	}
+
+	utils.AddFolderToPATHEnv(toolsFolder)
+
+	runtime.LogPrintf(app.ctx, "PATH: %s", os.Getenv("PATH"))
 }
 
 // Greet returns a greeting for the given name
-func (a *App) Greet(name string) string {
+func (app *App) Greet(name string) string {
 	return fmt.Sprintf("a %s, It's show time!", name)
 }
 
-func (a *App) InstallFfmpeg() string {
-	// Implementation for installing FFMPEG
-	return tools.InstallFfmpeg(a.ctx).Error()
+func (app *App) GetToolPaths() tools.ToolPaths {
+
+	toolPaths := tools.GetPaths()
+
+	runtime.LogPrintf(app.ctx, "Tool paths initialized: %+v", toolPaths)
+
+	return toolPaths
+}
+
+func (app *App) InstallFfmpeg() string {
+	if err := tools.InstallFfmpeg(app.ctx); err != nil {
+		return err.Error()
+	}
+	return "FFMPEG installed successfully"
 }
