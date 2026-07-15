@@ -1,3 +1,22 @@
+export namespace main {
+	
+	export class DownloadOptions {
+	    Url: string;
+	    OutputFolder: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new DownloadOptions(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.Url = source["Url"];
+	        this.OutputFolder = source["OutputFolder"];
+	    }
+	}
+
+}
+
 export namespace tools {
 	
 	export class ToolPaths {
