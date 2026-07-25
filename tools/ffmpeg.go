@@ -126,10 +126,3 @@ func InstallFfmpeg(ctx context.Context) error {
 
 	return nil
 }
-
-func InstallFfprobe() error { // this is probably only for mac, as btbn builds includes ffprobe and ffplay
-
-	return nil
-}
-
-// https://evermeet.cx/ffmpeg/getrelease/ffprobe/zip

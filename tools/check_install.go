@@ -5,12 +5,11 @@ import (
 )
 
 type ToolPaths struct {
-	Ytdlp   string `json:"ytdlp"`
-	FFmpeg  string `json:"ffmpeg"`
-	Ffprobe string `json:"ffprobe"`
-	Deno    string `json:"deno"`
-	Bun     string `json:"bun"`
-	Node    string `json:"node"`
+	Ytdlp  string `json:"ytdlp"`
+	FFmpeg string `json:"ffmpeg"`
+	Deno   string `json:"deno"`
+	Bun    string `json:"bun"`
+	Node   string `json:"node"`
 }
 
 func GetPaths() ToolPaths {
@@ -20,10 +19,6 @@ func GetPaths() ToolPaths {
 	paths.FFmpeg, err = exec.LookPath("ffmpeg")
 	if err != nil || paths.FFmpeg == "" {
 		paths.FFmpeg, _ = exec.LookPath("ffmpeg.exe")
-	}
-	paths.Ffprobe, err = exec.LookPath("ffprobe")
-	if err != nil || paths.Ffprobe == "" {
-		paths.Ffprobe, _ = exec.LookPath("ffprobe.exe")
 	}
 	paths.Ytdlp, err = exec.LookPath("yt-dlp")
 	if err != nil || paths.Ytdlp == "" {

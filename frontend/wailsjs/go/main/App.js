@@ -18,10 +18,6 @@ export function GetToolPaths() {
   return window['go']['main']['App']['GetToolPaths']();
 }
 
-export function Greet(arg1) {
-  return window['go']['main']['App']['Greet'](arg1);
-}
-
 export function InstallFfmpeg() {
   return window['go']['main']['App']['InstallFfmpeg']();
 }

@@ -3,6 +3,19 @@ export namespace main {
 	export class DownloadOptions {
 	    Url: string;
 	    OutputFolder: string;
+	    RemuxVideo: string;
+	    ExtractAudio: boolean;
+	    AudioFormat: string;
+	    AudioQuality: string;
+	    EmbedSubs: boolean;
+	    EmbedThumbnail: boolean;
+	    EmbedChapters: boolean;
+	    DownloadPlaylist: boolean;
+	    YtdlpPath: string;
+	    FfmpegPath: string;
+	    DenoPath: string;
+	    BunPath: string;
+	    NodePath: string;
 	
 	    static createFrom(source: any = {}) {
 	        return new DownloadOptions(source);
@@ -12,6 +25,19 @@ export namespace main {
 	        if ('string' === typeof source) source = JSON.parse(source);
 	        this.Url = source["Url"];
 	        this.OutputFolder = source["OutputFolder"];
+	        this.RemuxVideo = source["RemuxVideo"];
+	        this.ExtractAudio = source["ExtractAudio"];
+	        this.AudioFormat = source["AudioFormat"];
+	        this.AudioQuality = source["AudioQuality"];
+	        this.EmbedSubs = source["EmbedSubs"];
+	        this.EmbedThumbnail = source["EmbedThumbnail"];
+	        this.EmbedChapters = source["EmbedChapters"];
+	        this.DownloadPlaylist = source["DownloadPlaylist"];
+	        this.YtdlpPath = source["YtdlpPath"];
+	        this.FfmpegPath = source["FfmpegPath"];
+	        this.DenoPath = source["DenoPath"];
+	        this.BunPath = source["BunPath"];
+	        this.NodePath = source["NodePath"];
 	    }
 	}
 
@@ -22,7 +48,6 @@ export namespace tools {
 	export class ToolPaths {
 	    ytdlp: string;
 	    ffmpeg: string;
-	    ffprobe: string;
 	    deno: string;
 	    bun: string;
 	    node: string;
@@ -35,7 +60,6 @@ export namespace tools {
 	        if ('string' === typeof source) source = JSON.parse(source);
 	        this.ytdlp = source["ytdlp"];
 	        this.ffmpeg = source["ffmpeg"];
-	        this.ffprobe = source["ffprobe"];
 	        this.deno = source["deno"];
 	        this.bun = source["bun"];
 	        this.node = source["node"];

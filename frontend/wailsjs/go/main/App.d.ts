@@ -11,6 +11,4 @@ export function GetOutputFolder():Promise<string>;
 
 export function GetToolPaths():Promise<tools.ToolPaths>;
 
-export function Greet(arg1:string):Promise<string>;
-
 export function InstallFfmpeg():Promise<string>;

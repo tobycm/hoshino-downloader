@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"hoshino-downloader/tools"
 	"hoshino-downloader/utils"
-	"os"
 
 	"github.com/lrstanley/go-ytdlp"
 	"github.com/wailsapp/wails/v2/pkg/runtime"
@@ -35,12 +34,7 @@ func (app *App) startup(ctx context.Context) {
 
 	utils.AddFolderToPATHEnv(toolsFolder)
 
-	runtime.LogPrintf(app.ctx, "PATH: %s", os.Getenv("PATH"))
-}
-
-// Greet returns a greeting for the given name
-func (app *App) Greet(name string) string {
-	return fmt.Sprintf("a %s, It's show time!", name)
+	// runtime.LogPrintf(app.ctx, "PATH: %s", os.Getenv("PATH"))
 }
 
 func (app *App) CheckTools(firstTime bool) (tools.ToolPaths, error) {
@@ -79,28 +73,88 @@ func (app *App) GetOutputFolder() string {
 	return folder
 }
 
-type DownloadType int
-
-const (
-	VideoAndAudio = iota
-	VideoOnly
-	AudioOnly
-)
-
 type DownloadOptions struct {
-	Url          string
-	OutputFolder string
-	// downloadType DownloadType
+	Url            string
+	OutputFolder   string
+	RemuxVideo     string // format
+	ExtractAudio   bool
+	AudioFormat    string
+	AudioQuality   string
+	EmbedSubs      bool
+	EmbedThumbnail bool
+	EmbedChapters  bool
+
+	DownloadPlaylist bool
+
+	YtdlpPath  string
+	FfmpegPath string
+	DenoPath   string
+	BunPath    string
+	NodePath   string
 }
 
 func (app *App) Download(options DownloadOptions) string {
-	command := ytdlp.New().Paths(options.OutputFolder).Output("%(title)s [%(id)s].%(ext)s")
+	command := ytdlp.New().
+		SetExecutable(options.YtdlpPath).
+		Paths(options.OutputFolder).
+		Output("%(title)s [%(id)s].%(ext)s").
+		FFmpegLocation(options.FfmpegPath)
+
+	if options.RemuxVideo != "" {
+		command = command.RemuxVideo(options.RemuxVideo)
+	}
+
+	if options.AudioFormat != "" {
+		command = command.AudioFormat(options.AudioFormat)
+	}
+
+	if options.AudioQuality != "" {
+		command = command.AudioQuality(options.AudioQuality)
+	}
+
+	if options.DenoPath != "" {
+		command = command.JsRuntimes("deno")
+	}
+
+	if options.BunPath != "" {
+		command = command.JsRuntimes("bun")
+	}
+
+	if options.NodePath != "" {
+		command = command.JsRuntimes("node")
+	}
+
+	if options.ExtractAudio {
+		command = command.ExtractAudio()
+	}
+
+	if options.EmbedSubs {
+		command = command.EmbedSubs()
+	}
+
+	if options.EmbedThumbnail {
+		command = command.EmbedThumbnail()
+	}
+
+	if options.EmbedChapters {
+		command = command.EmbedChapters()
+	}
+
+	if options.DownloadPlaylist {
+		command = command.YesPlaylist()
+	} else {
+		command = command.NoPlaylist()
+	}
+
+	runtime.LogPrintf(app.ctx, "Download Options: %v", options)
 
 	result, err := command.Run(context.Background(), options.Url)
 	if err != nil {
 		runtime.LogPrintf(app.ctx, "Error occurred while downloading: %v | Logs: %v", err, result.OutputLogs)
 		return fmt.Sprintf("Error occurred while downloading: %v | Logs: %v", err, result.OutputLogs)
 	}
+
+	runtime.LogPrintf(app.ctx, "Download completed: %v", result.OutputLogs)
 
 	return fmt.Sprintf("Download completed: %v", result.OutputLogs)
 }
