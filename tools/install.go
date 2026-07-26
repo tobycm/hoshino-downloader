@@ -10,7 +10,9 @@ import (
 )
 
 var (
-	extractCfg = extract.NewConfig()
+	extractCfg = extract.NewConfig(
+		extract.WithPatterns("*/bin/ffmpeg", "*/bin/ffprobe", "*/bin/ffmpeg.exe", "*/bin/ffprobe.exe"),
+	)
 )
 
 type FileDownload struct {

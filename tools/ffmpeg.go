@@ -14,8 +14,6 @@ import (
 	"github.com/hashicorp/go-extract"
 )
 
-var ()
-
 func buildFfmpegBtbnLink() (FileDownload, error) {
 	var os string
 	var arch string
@@ -107,7 +105,14 @@ func InstallFfmpeg(ctx context.Context) error {
 		return fmt.Errorf("[install_ffmpeg] failed to seek in destination file: %w", err)
 	}
 
-	if err := extract.Unpack(ctx, tempFolder, destinationFile, extractCfg); err != nil {
+	var cfg *extract.Config
+	if runtime.GOOS == "darwin" {
+		cfg = extract.NewConfig()
+	} else {
+		cfg = extractCfg
+	}
+
+	if err := extract.Unpack(ctx, tempFolder, destinationFile, cfg); err != nil {
 		return fmt.Errorf("[install_ffmpeg] failed to unpack ffmpeg: %w", err)
 	}
 
@@ -126,3 +131,10 @@ func InstallFfmpeg(ctx context.Context) error {
 
 	return nil
 }
+
+func InstallFfprobe() error { // this is probably only for mac, as btbn builds includes ffprobe and ffplay
+
+	return nil
+}
+
+// https://evermeet.cx/ffmpeg/getrelease/ffprobe/zip

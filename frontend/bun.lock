@@ -6,6 +6,7 @@
       "name": "frontend",
       "dependencies": {
         "@fontsource-variable/playpen-sans": "^5.2.9",
+        "@fontsource/playpen-sans": "^5.3.0",
         "@fontsource/ubuntu": "^5.2.8",
         "@mantine/core": "^9.4.1",
         "@mantine/form": "^9.4.1",
@@ -102,6 +103,8 @@
     "@floating-ui/utils": ["@floating-ui/utils@0.2.11", "", {}, "sha512-RiB/yIh78pcIxl6lLMG0CgBXAZ2Y0eVHqMPYugu+9U0AeT6YBeiJpf7lbdJNIugFP5SIjwNRgo4DhR1Qxi26Gg=="],
 
     "@fontsource-variable/playpen-sans": ["@fontsource-variable/playpen-sans@5.2.9", "", {}, "sha512-MET5qmJ9izZUhS5eQICWmofUDc8Muuf7sXLqN0NxSpdrpVfKaP6DY/dOeVBLqU6D6lyMh9KRuDEQ4UfpszN+ig=="],
+
+    "@fontsource/playpen-sans": ["@fontsource/playpen-sans@5.3.0", "", {}, "sha512-94O9WdgAmvFpAjsPOgg5JZII4clcNeeMqQdNZh7Jz40rmcNv05jzwxyuw25IRjTb4o2aMV7eXjXC8GTFo/+s8Q=="],
 
     "@fontsource/ubuntu": ["@fontsource/ubuntu@5.2.8", "", {}, "sha512-esSJCpgigwWOm4Ug9f7AMozUyBq5Iobea5C9QYsl2OlCb62wZABBUbXahHLdFv5Ru4lJCD9tUX6xEAeLwUTNBg=="],
 
