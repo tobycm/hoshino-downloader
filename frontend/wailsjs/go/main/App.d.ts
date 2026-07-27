@@ -12,3 +12,5 @@ export function GetOutputFolder():Promise<string>;
 export function GetToolPaths():Promise<tools.ToolPaths>;
 
 export function InstallFfmpeg():Promise<string>;
+
+export function InstallYtdlp():Promise<string>;

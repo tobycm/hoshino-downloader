@@ -44,7 +44,11 @@ func (app *App) CheckTools(firstTime bool) (tools.ToolPaths, error) {
 
 	app.CheckedForTools = true
 
-	return tools.GetPaths(), nil
+	result := tools.GetPaths()
+
+	runtime.LogPrintf(app.ctx, "Tool paths initialized: %+v", result)
+
+	return result, nil
 
 }
 
@@ -62,6 +66,13 @@ func (app *App) InstallFfmpeg() string {
 		return err.Error()
 	}
 	return "FFMPEG installed successfully"
+}
+
+func (app *App) InstallYtdlp() string {
+	if err := tools.InstallYtdlp(); err != nil {
+		return err.Error()
+	}
+	return "Yt-dlp installed successfully"
 }
 
 func (app *App) GetOutputFolder() string {

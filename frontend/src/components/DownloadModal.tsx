@@ -29,7 +29,7 @@ export default function DownloadModal({ opened, onClose }: { opened: boolean; on
   const form = useForm({
     initialValues: {
       url: "",
-      outputFolder: "~",
+      outputFolder: "",
 
       format: "",
       quality: "5",

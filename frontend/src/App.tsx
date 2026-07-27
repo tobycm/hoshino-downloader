@@ -4,7 +4,7 @@ import { useDisclosure } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
-import { CheckTools, InstallFfmpeg } from "../wailsjs/go/main/App";
+import { CheckTools, InstallFfmpeg, InstallYtdlp } from "../wailsjs/go/main/App";
 import DownloadModal from "./components/DownloadModal";
 import { useTools } from "./states/tools";
 
@@ -60,6 +60,7 @@ function App() {
       <DownloadModal opened={downloadModalOpened} onClose={downloadModalControls.close} />
       <Title>Hoshino Downloader</Title>
 
+      <Button onClick={async () => console.log(await InstallYtdlp())}>Install Yt-dlp</Button>
       <Button onClick={async () => console.log(await InstallFfmpeg())}>Install FFMPEG</Button>
       <Button onClick={() => downloadModalControls.open()} disabled={toolPaths.isLoading}>
         Download Video

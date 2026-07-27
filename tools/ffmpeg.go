@@ -74,16 +74,11 @@ func InstallFfmpeg(ctx context.Context) error {
 		return err
 	}
 
-	tempFolder := path.Join(toolsFolder, "temp")
-	if err := os.MkdirAll(tempFolder, 0775); err != nil {
-		return fmt.Errorf("[install_ffmpeg] failed to create temp folder: %w", err)
-	}
-	defer os.RemoveAll(tempFolder)
-
-	destinationFile, err := os.Create(path.Join(tempFolder, fileDownload.filename))
+	destinationFile, err := os.Create(path.Join(toolsFolder, fileDownload.filename))
 	if err != nil {
 		return err
 	}
+	defer os.Remove(path.Join(toolsFolder, fileDownload.filename))
 	defer destinationFile.Close()
 
 	response, err := http.Get(fileDownload.link)
@@ -109,14 +104,15 @@ func InstallFfmpeg(ctx context.Context) error {
 	if runtime.GOOS == "darwin" {
 		cfg = extract.NewConfig()
 	} else {
-		cfg = extractCfg
+		cfg = ffmpegExtractCfg
 	}
 
-	if err := extract.Unpack(ctx, tempFolder, destinationFile, cfg); err != nil {
+	if err := extract.Unpack(ctx, toolsFolder, destinationFile, cfg); err != nil {
 		return fmt.Errorf("[install_ffmpeg] failed to unpack ffmpeg: %w", err)
 	}
+	defer os.RemoveAll(path.Join(toolsFolder, strings.TrimSuffix(fileDownload.filename, fileDownload.ext)))
 
-	binFolder := path.Join(tempFolder, strings.TrimSuffix(fileDownload.filename, fileDownload.ext), "bin")
+	binFolder := path.Join(toolsFolder, strings.TrimSuffix(fileDownload.filename, fileDownload.ext), "bin")
 
 	utils.CopyAllFilesInFolder(binFolder, toolsFolder)
 

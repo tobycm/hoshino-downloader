@@ -21,3 +21,7 @@ export function GetToolPaths() {
 export function InstallFfmpeg() {
   return window['go']['main']['App']['InstallFfmpeg']();
 }
+
+export function InstallYtdlp() {
+  return window['go']['main']['App']['InstallYtdlp']();
+}

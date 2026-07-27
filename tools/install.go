@@ -10,7 +10,7 @@ import (
 )
 
 var (
-	extractCfg = extract.NewConfig(
+	ffmpegExtractCfg = extract.NewConfig(
 		extract.WithPatterns("*/bin/ffmpeg", "*/bin/ffprobe", "*/bin/ffmpeg.exe", "*/bin/ffprobe.exe"),
 	)
 )
@@ -41,9 +41,4 @@ func GetToolsFolder() (string, error) {
 	}
 
 	return folder, nil
-}
-
-func InstallDeno() error {
-
-	return nil
 }
