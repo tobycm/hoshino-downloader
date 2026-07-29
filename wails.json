@@ -9,5 +9,8 @@
   "author": {
     "name": "Toby Cm",
     "email": "toby@vsus.app"
+  },
+  "info": {
+    "productVersion": "0.2.0"
   }
 }
