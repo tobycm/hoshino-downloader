@@ -1,16 +1,21 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-const initial = {
+const tools = ["ytdlp", "ffmpeg", "deno", "bun", "node"] as const;
+export type Tool = (typeof tools)[number];
+
+const initial: Record<Tool, string> & { missing?: Tool[] } = {
   ytdlp: "",
   ffmpeg: "",
   deno: "",
   bun: "",
   node: "",
+  missing: [] as Tool[],
 };
 
 type ToolsState = typeof initial & {
   setTools: (newTools: typeof initial) => void;
+  setMissing: (missing: Tool[]) => void;
 };
 
 export const useTools = create<ToolsState>()(
@@ -18,6 +23,7 @@ export const useTools = create<ToolsState>()(
     (set) => ({
       ...initial,
       setTools: (newTools: typeof initial) => set(() => newTools),
+      setMissing: (missing: Tool[]) => set(() => ({ missing })),
     }),
     {
       name: "hoshino-storage",

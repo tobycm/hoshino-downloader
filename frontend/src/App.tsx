@@ -1,25 +1,33 @@
-import { Button, Stack, Title } from "@mantine/core";
+import { Button, Group, Image, Stack, TextInput, Title } from "@mantine/core";
 
 import { useDisclosure } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
-import { CheckTools, InstallFfmpeg, InstallYtdlp } from "../wailsjs/go/main/App";
+import { useShallow } from "zustand/shallow";
+import { CheckTools } from "../wailsjs/go/main/App";
 import DownloadModal from "./components/DownloadModal";
-import { useTools } from "./states/tools";
+import MissingToolsModal from "./components/MissingToolsModal";
+import { useAppState } from "./states/app";
+import { useTools, type Tool } from "./states/tools";
+
+import hoshino from "./assets/hoshino smol.jpg";
 
 const tools = ["ytdlp", "ffmpeg"];
 const jsRuntimes = ["deno", "bun", "node"];
 
 function App() {
   const [downloadModalOpened, downloadModalControls] = useDisclosure();
-
+  const [missingToolsModalOpened, missingToolsModalControls] = useDisclosure();
+  const url = useAppState((state) => state.url);
+  const setUrl = useAppState(useShallow((state) => state.setUrl));
   const toolPaths = useQuery({
     queryKey: ["CheckTools"],
     queryFn: () => CheckTools(false),
   });
 
   const setTools = useTools((state) => state.setTools);
+  const setMissing = useTools((state) => state.setMissing);
 
   useEffect(() => {
     if (!toolPaths.data) return;
@@ -47,6 +55,10 @@ function App() {
         title: "Missing Tools",
         message: `The following tools are missing: ${missing.join(", ")}`,
       });
+
+      setMissing(missing as Tool[]);
+
+      missingToolsModalControls.open();
     } else {
       notifications.show({
         title: "All Tools Found",
@@ -56,15 +68,30 @@ function App() {
   }, [toolPaths.data]);
 
   return (
-    <Stack mih="100vh" justify="center" align="center" c="white" bg="#1c1c1c">
+    <Stack mih="100vh" justify="center" align="center" c="white" bg="#1c1c1c" ta="center">
       <DownloadModal opened={downloadModalOpened} onClose={downloadModalControls.close} />
+      <MissingToolsModal opened={missingToolsModalOpened} onClose={missingToolsModalControls.close} />
+
+      <Image src={hoshino} w="20vw" h="20vw" bdrs="xl" />
       <Title>Hoshino Downloader</Title>
 
-      <Button onClick={async () => console.log(await InstallYtdlp())}>Install Yt-dlp</Button>
-      <Button onClick={async () => console.log(await InstallFfmpeg())}>Install FFMPEG</Button>
-      <Button onClick={() => downloadModalControls.open()} disabled={toolPaths.isLoading}>
-        Download Video
-      </Button>
+      <Group>
+        <TextInput
+          placeholder="Enter URL here"
+          value={url}
+          styles={{
+            input: {
+              color: "white",
+              background: "transparent",
+            },
+          }}
+          w="50vw"
+          onChange={(event) => setUrl(event.currentTarget.value)}
+        />
+        <Button onClick={() => downloadModalControls.open()} disabled={toolPaths.isLoading}>
+          Download
+        </Button>
+      </Group>
     </Stack>
   );
 }

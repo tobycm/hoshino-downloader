@@ -75,6 +75,13 @@ func (app *App) InstallYtdlp() string {
 	return "Yt-dlp installed successfully"
 }
 
+func (app *App) InstallDeno() string {
+	if err := tools.InstallDeno(app.ctx); err != nil {
+		return err.Error()
+	}
+	return "Deno installed successfully"
+}
+
 func (app *App) GetOutputFolder() string {
 	folder, error := runtime.OpenDirectoryDialog(app.ctx, runtime.OpenDialogOptions{})
 	if error != nil {

@@ -20,6 +20,7 @@ import { useMutation } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
 import { Download, GetOutputFolder } from "../../wailsjs/go/main/App";
 import { ClipboardGetText } from "../../wailsjs/runtime";
+import { useAppState } from "../states/app";
 import { useTools } from "../states/tools";
 
 const videoFormats = ["mp4", "mkv", "webm", "mov", "avi", "ogg", "flv", "gif"];
@@ -69,10 +70,13 @@ export default function DownloadModal({ opened, onClose }: { opened: boolean; on
     },
   });
 
+  const url = useAppState((state) => state.url);
+
   useEffect(() => {
     first.current = opened;
     if (opened) {
       getClipboard.mutate();
+      form.setFieldValue("url", url);
     }
 
     setShowMoreFormats(false);

@@ -4,6 +4,7 @@ import { createRoot } from "react-dom/client";
 import "@mantine/core/styles.css";
 import "@mantine/notifications/styles.css";
 
+import "@fontsource/comic-mono";
 import "@fontsource/playpen-sans";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
