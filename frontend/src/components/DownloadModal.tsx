@@ -13,7 +13,7 @@ import {
   TextInput,
   useCombobox,
 } from "@mantine/core";
-import { useForm } from "@mantine/form";
+import { isNotEmpty, useForm } from "@mantine/form";
 import { notifications } from "@mantine/notifications";
 import { IconClipboard, IconFolderOpen } from "@tabler/icons-react";
 import { useMutation } from "@tanstack/react-query";
@@ -22,9 +22,7 @@ import { Download, GetOutputFolder } from "../../wailsjs/go/main/App";
 import { ClipboardGetText } from "../../wailsjs/runtime";
 import { useAppState } from "../states/app";
 import { useTools } from "../states/tools";
-
-const videoFormats = ["mp4", "mkv", "webm", "mov", "avi", "ogg", "flv", "gif"];
-const audioFormats = ["mp3", "m4a", "aac", "flac", "wav", "opus", "alac", "aiff", "vorbis", "mka"];
+import { audioFormats, videoFormats } from "../utils";
 
 export default function DownloadModal({ opened, onClose }: { opened: boolean; onClose: () => void }) {
   const form = useForm({
@@ -41,10 +39,10 @@ export default function DownloadModal({ opened, onClose }: { opened: boolean; on
       embedChapters: true,
       embedSubs: true,
     },
-    // validate: {
-    //   url: isNotEmpty("URL is required"),
-    //   outputFolder: isNotEmpty("Output folder is required"),
-    // },
+    validate: {
+      url: isNotEmpty("URL is required"),
+      outputFolder: isNotEmpty("Output folder is required"),
+    },
   });
 
   const first = useRef(true);
@@ -150,7 +148,7 @@ export default function DownloadModal({ opened, onClose }: { opened: boolean; on
   }, [downloadMode, opened]);
 
   return (
-    <Modal opened={opened} onClose={onClose} title="Download URL" centered>
+    <Modal opened={opened} onClose={onClose} title="Download" centered>
       <form
         onSubmit={form.onSubmit((values) => {
           download.mutate(values);

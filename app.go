@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"hoshino-downloader/tools"
 	"hoshino-downloader/utils"
+	"os"
 
 	"github.com/lrstanley/go-ytdlp"
 	"github.com/wailsapp/wails/v2/pkg/runtime"
@@ -34,7 +35,9 @@ func (app *App) startup(ctx context.Context) {
 
 	utils.AddFolderToPATHEnv(toolsFolder)
 
-	// runtime.LogPrintf(app.ctx, "PATH: %s", os.Getenv("PATH"))
+	runtime.LogPrintf(app.ctx, "Environment: %+v", runtime.Environment(app.ctx))
+
+	runtime.LogPrintf(app.ctx, "PATH: %s", os.Getenv("PATH"))
 }
 
 func (app *App) CheckTools(firstTime bool) (tools.ToolPaths, error) {
