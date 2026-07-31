@@ -6,6 +6,7 @@ import (
 	"hoshino-downloader/tools"
 	"hoshino-downloader/utils"
 	"os"
+	rt "runtime"
 
 	"github.com/lrstanley/go-ytdlp"
 	"github.com/wailsapp/wails/v2/pkg/runtime"
@@ -40,19 +41,29 @@ func (app *App) startup(ctx context.Context) {
 	runtime.LogPrintf(app.ctx, "PATH: %s", os.Getenv("PATH"))
 }
 
-func (app *App) CheckTools(firstTime bool) (tools.ToolPaths, error) {
-	if firstTime && app.CheckedForTools {
-		return tools.ToolPaths{}, fmt.Errorf("checked for tools already")
+type DebugInfo struct {
+	ToolPaths tools.ToolPaths
+
+	ToolFolder string
+
+	OS   string
+	Arch string
+}
+
+func (app *App) GetDebugInfo() DebugInfo {
+	toolFolder, err := tools.GetToolsFolder()
+	if err != nil {
+		fmt.Printf("Error occurred while getting tools folder: %v", err)
+		return DebugInfo{}
 	}
 
-	app.CheckedForTools = true
+	return DebugInfo{
+		ToolPaths: app.GetToolPaths(),
 
-	result := tools.GetPaths()
-
-	runtime.LogPrintf(app.ctx, "Tool paths initialized: %+v", result)
-
-	return result, nil
-
+		ToolFolder: toolFolder,
+		OS:         rt.GOOS,
+		Arch:       rt.GOARCH,
+	}
 }
 
 func (app *App) GetToolPaths() tools.ToolPaths {

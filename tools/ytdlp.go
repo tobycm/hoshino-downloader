@@ -30,6 +30,11 @@ func InstallYtdlp() error {
 		return err
 	}
 
+	err = os.MkdirAll(toolsFolder, 0755)
+	if err != nil {
+		return fmt.Errorf("[install_ytdlp] failed to create tools folder: %w", err)
+	}
+
 	destinationFile, err := os.Create(path.Join(toolsFolder, filename))
 	if err != nil {
 		return err

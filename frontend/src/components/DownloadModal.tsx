@@ -20,7 +20,7 @@ import { notifications } from "@mantine/notifications";
 import { IconClipboard, IconFolderOpen } from "@tabler/icons-react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
-import { CheckTools, Download, GetOutputFolder, GetSensibleDownloadFolder } from "../../wailsjs/go/main/App";
+import { Download, GetOutputFolder, GetSensibleDownloadFolder, GetToolPaths } from "../../wailsjs/go/main/App";
 import { ClipboardGetText } from "../../wailsjs/runtime";
 import { useAppState } from "../states/app";
 import { audioFormats, audioQualities, videoFormats, videoQualities } from "../utils/constants";
@@ -53,8 +53,8 @@ export default function DownloadModal({ opened, onClose }: { opened: boolean; on
   const first = useRef(true);
 
   const toolPaths = useQuery({
-    queryKey: ["CheckTools"],
-    queryFn: () => CheckTools(false),
+    queryKey: ["GetToolPaths"],
+    queryFn: () => GetToolPaths(),
   });
 
   const sensibleDownloadFolder = useQuery({

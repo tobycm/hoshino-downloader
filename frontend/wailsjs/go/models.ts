@@ -1,5 +1,41 @@
 export namespace main {
 	
+	export class DebugInfo {
+	    ToolPaths: tools.ToolPaths;
+	    ToolFolder: string;
+	    OS: string;
+	    Arch: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new DebugInfo(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.ToolPaths = this.convertValues(source["ToolPaths"], tools.ToolPaths);
+	        this.ToolFolder = source["ToolFolder"];
+	        this.OS = source["OS"];
+	        this.Arch = source["Arch"];
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
 	export class DownloadOptions {
 	    Url: string;
 	    OutputFolder: string;

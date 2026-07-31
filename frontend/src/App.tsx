@@ -5,7 +5,7 @@ import { notifications } from "@mantine/notifications";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { useShallow } from "zustand/shallow";
-import { CheckTools } from "../wailsjs/go/main/App";
+import { GetToolPaths } from "../wailsjs/go/main/App";
 import DownloadModal from "./components/DownloadModal";
 import ToolsModal from "./components/ToolsModal";
 import { useAppState } from "./states/app";
@@ -23,8 +23,8 @@ function App() {
   const url = useAppState((state) => state.url);
   const setUrl = useAppState(useShallow((state) => state.setUrl));
   const toolPaths = useQuery({
-    queryKey: ["CheckTools"],
-    queryFn: () => CheckTools(false),
+    queryKey: ["GetToolPaths"],
+    queryFn: () => GetToolPaths(),
   });
 
   useEffect(() => {

@@ -1,14 +1,21 @@
 import { Button, List, Loader, Modal, Stack, Text, Title } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { useQuery } from "@tanstack/react-query";
-import { CheckTools, InstallDeno, InstallFfmpeg, InstallYtdlp } from "../../wailsjs/go/main/App";
+import { useEffect } from "react";
+import { GetToolPaths, InstallDeno, InstallFfmpeg, InstallYtdlp } from "../../wailsjs/go/main/App";
 import { tools } from "../utils/tools";
 
 export default function ToolsModal({ opened, onClose }: { opened: boolean; onClose: () => void }) {
   const toolPaths = useQuery({
-    queryKey: ["CheckTools"],
-    queryFn: () => CheckTools(false),
+    queryKey: ["GetToolPaths"],
+    queryFn: () => GetToolPaths(),
   });
+
+  useEffect(() => {
+    if (!opened) return;
+
+    toolPaths.refetch();
+  }, [opened]);
 
   const installFfmpeg = useQuery({
     queryKey: ["install_ffmpeg"],
@@ -67,6 +74,7 @@ export default function ToolsModal({ opened, onClose }: { opened: boolean; onClo
                 if (!toolPaths.data.deno) {
                   promises.push(installDeno.refetch());
                 }
+
                 await Promise.all(promises);
                 notifications.show({
                   title: "Tools Installed",

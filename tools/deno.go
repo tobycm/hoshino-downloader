@@ -8,6 +8,7 @@ import (
 	"os"
 	"path"
 	"runtime"
+	"strings"
 
 	"github.com/hashicorp/go-extract"
 )
@@ -51,25 +52,30 @@ func InstallDeno(ctx context.Context) error {
 	case "windows":
 		target = "x86_64-pc-windows-msvc"
 	default:
-		return fmt.Errorf("[install_ytdlp] platform not supported")
+		return fmt.Errorf("[install_deno] platform not supported")
 	}
 
 	versionResponse, err := http.Get(versionLink)
 	if err != nil {
-		return fmt.Errorf("[install_ytdlp] failed to get version: %w", err)
+		return fmt.Errorf("[install_deno] failed to get version: %w", err)
 	}
 	defer versionResponse.Body.Close()
 
 	version, err := io.ReadAll(versionResponse.Body)
 	if err != nil {
-		return fmt.Errorf("[install_ytdlp] failed to read version: %w", err)
+		return fmt.Errorf("[install_deno] failed to read version: %w", err)
 	}
 
-	url := fmt.Sprintf(downloadUrl, version, target)
+	url := fmt.Sprintf(downloadUrl, strings.TrimSpace(string(version)), target)
 
 	toolsFolder, err := GetToolsFolder()
 	if err != nil {
 		return err
+	}
+
+	err = os.MkdirAll(toolsFolder, 0755)
+	if err != nil {
+		return fmt.Errorf("[install_deno] failed to create tools folder: %w", err)
 	}
 
 	destinationFile, err := os.Create(path.Join(toolsFolder, "deno.zip"))

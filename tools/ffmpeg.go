@@ -74,6 +74,11 @@ func InstallFfmpeg(ctx context.Context) error {
 		return err
 	}
 
+	err = os.MkdirAll(toolsFolder, 0755)
+	if err != nil {
+		return fmt.Errorf("[install_ffmpeg] failed to create tools folder: %w", err)
+	}
+
 	destinationFile, err := os.Create(path.Join(toolsFolder, fileDownload.filename))
 	if err != nil {
 		return err
