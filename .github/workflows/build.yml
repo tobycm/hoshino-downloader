@@ -64,3 +64,4 @@ jobs:
           name: ${{ matrix.artifact_name }}
           path: build/bin/
           retention-days: 7
+          archive: false
