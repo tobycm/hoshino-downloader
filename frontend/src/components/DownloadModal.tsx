@@ -1,7 +1,9 @@
 import {
   ActionIcon,
+  Autocomplete,
   Button,
   Combobox,
+  Group,
   Input,
   InputBase,
   Loader,
@@ -22,7 +24,7 @@ import { Download, GetOutputFolder } from "../../wailsjs/go/main/App";
 import { ClipboardGetText } from "../../wailsjs/runtime";
 import { useAppState } from "../states/app";
 import { useTools } from "../states/tools";
-import { audioFormats, videoFormats } from "../utils";
+import { audioFormats, audioQualities, videoFormats, videoQualities } from "../utils";
 
 export default function DownloadModal({ opened, onClose }: { opened: boolean; onClose: () => void }) {
   const form = useForm({
@@ -34,10 +36,14 @@ export default function DownloadModal({ opened, onClose }: { opened: boolean; on
       quality: "5",
 
       downloadPlaylist: false,
+      playlistRange: "",
 
       embedThumbnail: true,
       embedChapters: true,
       embedSubs: true,
+      embedMetadata: true,
+
+      cropSquareThumbnail: false,
     },
     validate: {
       url: isNotEmpty("URL is required"),
@@ -85,10 +91,15 @@ export default function DownloadModal({ opened, onClose }: { opened: boolean; on
       const payload: Parameters<typeof Download>[0] = {
         Url: values.url,
         OutputFolder: values.outputFolder,
+
         EmbedChapters: values.embedChapters,
         EmbedThumbnail: values.embedThumbnail,
         EmbedSubs: values.embedSubs,
+        EmbedMetadata: values.embedMetadata,
+        CropSquareThumbnail: values.cropSquareThumbnail,
+
         DownloadPlaylist: values.downloadPlaylist,
+        PlaylistRange: values.playlistRange,
 
         ExtractAudio: downloadMode === "audio",
         AudioFormat: downloadMode === "audio" ? values.format : "",
@@ -175,46 +186,10 @@ export default function DownloadModal({ opened, onClose }: { opened: boolean; on
             {...form.getInputProps("url")}
           />
 
-          {form.values.url.includes("?list=") && <Switch label="Download Playlist" {...form.getInputProps("downloadPlaylist")} />}
-
-          <Combobox
-            store={combobox}
-            withinPortal={false}
-            onOptionSubmit={(val) => {
-              if (val === "More") {
-                setShowMoreFormats(true);
-                return;
-              }
-
-              form.setFieldValue("format", val);
-              combobox.closeDropdown();
-            }}>
-            <Combobox.Target targetType="button">
-              <InputBase
-                label="Format"
-                component="button"
-                type="button"
-                pointer
-                rightSection={<Combobox.Chevron />}
-                onClick={() => combobox.toggleDropdown()}
-                rightSectionPointerEvents="none">
-                {form.values.format || <Input.Placeholder>Pick value</Input.Placeholder>}
-              </InputBase>
-            </Combobox.Target>
-
-            <Combobox.Dropdown>
-              <Combobox.Options>
-                <ScrollArea h={132}>
-                  {formats.map((format) => (
-                    <Combobox.Option key={format} value={format}>
-                      {format}
-                    </Combobox.Option>
-                  ))}
-                  {!showMoreFormats && <Combobox.Option value="More">More</Combobox.Option>}
-                </ScrollArea>
-              </Combobox.Options>
-            </Combobox.Dropdown>
-          </Combobox>
+          <Group grow>
+            {form.values.url.includes("?list=") && <Switch label="Download Playlist" {...form.getInputProps("downloadPlaylist")} />}
+            {form.values.downloadPlaylist && <TextInput label="Playlist Range" {...form.getInputProps("playlistRange")} />}
+          </Group>
 
           <TextInput
             rightSection={
@@ -227,6 +202,61 @@ export default function DownloadModal({ opened, onClose }: { opened: boolean; on
             placeholder="~"
             {...form.getInputProps("outputFolder")}
           />
+
+          <Group grow>
+            <Combobox
+              store={combobox}
+              withinPortal={false}
+              onOptionSubmit={(val) => {
+                if (val === "More") {
+                  setShowMoreFormats(true);
+                  return;
+                }
+                form.setFieldValue("format", val);
+                combobox.closeDropdown();
+              }}>
+              <Combobox.Target targetType="button">
+                <InputBase
+                  label="Format"
+                  component="button"
+                  type="button"
+                  pointer
+                  rightSection={<Combobox.Chevron />}
+                  onClick={() => combobox.toggleDropdown()}
+                  rightSectionPointerEvents="none">
+                  {form.values.format || <Input.Placeholder>Pick value</Input.Placeholder>}
+                </InputBase>
+              </Combobox.Target>
+              <Combobox.Dropdown>
+                <Combobox.Options>
+                  <ScrollArea h={132}>
+                    {formats.map((format) => (
+                      <Combobox.Option key={format} value={format}>
+                        {format}
+                      </Combobox.Option>
+                    ))}
+                    {!showMoreFormats && <Combobox.Option value="More">More</Combobox.Option>}
+                  </ScrollArea>
+                </Combobox.Options>
+              </Combobox.Dropdown>
+            </Combobox>
+
+            <Autocomplete
+              data={downloadMode === "audio" ? audioQualities : videoQualities}
+              {...form.getInputProps("quality")}
+              label="Quality"
+              description={downloadMode === "audio" ? "0 (best) to 10 (worst)" : ""}
+            />
+          </Group>
+
+          <Group w="100%" justify="space-between">
+            <Switch label="Embed Chapters" {...form.getInputProps("embedChapters", { type: "checkbox" })} />
+            <Switch label="Embed Thumbnails" {...form.getInputProps("embedThumbnail", { type: "checkbox" })} />
+            {downloadMode !== "audio" && <Switch label="Embed Subtitles" {...form.getInputProps("embedSubs", { type: "checkbox" })} />}
+            <Switch label="Embed Metadata" {...form.getInputProps("embedMetadata", { type: "checkbox" })} />
+            {form.values.embedThumbnail && <Switch label="Square Thumbnail" {...form.getInputProps("cropSquareThumbnail", { type: "checkbox" })} />}
+          </Group>
+
           <Button disabled={download.isPending} type="submit" style={{ marginTop: "auto" }}>
             {download.isPending ? <Loader size="xs" /> : "Download"}
           </Button>

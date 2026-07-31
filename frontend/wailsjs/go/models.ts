@@ -10,7 +10,10 @@ export namespace main {
 	    EmbedSubs: boolean;
 	    EmbedThumbnail: boolean;
 	    EmbedChapters: boolean;
+	    EmbedMetadata: boolean;
+	    CropSquareThumbnail: boolean;
 	    DownloadPlaylist: boolean;
+	    PlaylistRange: string;
 	    YtdlpPath: string;
 	    FfmpegPath: string;
 	    DenoPath: string;
@@ -32,7 +35,10 @@ export namespace main {
 	        this.EmbedSubs = source["EmbedSubs"];
 	        this.EmbedThumbnail = source["EmbedThumbnail"];
 	        this.EmbedChapters = source["EmbedChapters"];
+	        this.EmbedMetadata = source["EmbedMetadata"];
+	        this.CropSquareThumbnail = source["CropSquareThumbnail"];
 	        this.DownloadPlaylist = source["DownloadPlaylist"];
+	        this.PlaylistRange = source["PlaylistRange"];
 	        this.YtdlpPath = source["YtdlpPath"];
 	        this.FfmpegPath = source["FfmpegPath"];
 	        this.DenoPath = source["DenoPath"];

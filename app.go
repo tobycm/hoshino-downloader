@@ -95,17 +95,21 @@ func (app *App) GetOutputFolder() string {
 }
 
 type DownloadOptions struct {
-	Url            string
-	OutputFolder   string
-	RemuxVideo     string // format
-	ExtractAudio   bool
-	AudioFormat    string
-	AudioQuality   string
-	EmbedSubs      bool
-	EmbedThumbnail bool
-	EmbedChapters  bool
+	Url          string
+	OutputFolder string
+	RemuxVideo   string // format
+	ExtractAudio bool
+	AudioFormat  string
+	AudioQuality string
+
+	EmbedSubs           bool
+	EmbedThumbnail      bool
+	EmbedChapters       bool
+	EmbedMetadata       bool
+	CropSquareThumbnail bool
 
 	DownloadPlaylist bool
+	PlaylistRange    string
 
 	YtdlpPath  string
 	FfmpegPath string
@@ -157,8 +161,19 @@ func (app *App) Download(options DownloadOptions) string {
 		command = command.EmbedThumbnail()
 	}
 
+	if options.CropSquareThumbnail {
+		command = command.ConvertThumbnails("jpg").
+			PostProcessorArgs("ThumbnailsConvertor+ffmpeg_o:-vf crop='ih:ih:(iw-ih)/2:0'")
+	}
+
 	if options.EmbedChapters {
 		command = command.EmbedChapters()
+	}
+
+	if options.EmbedMetadata {
+		command = command.EmbedMetadata()
+	} else {
+		command = command.NoEmbedMetadata()
 	}
 
 	if options.DownloadPlaylist {
@@ -167,7 +182,12 @@ func (app *App) Download(options DownloadOptions) string {
 		command = command.NoPlaylist()
 	}
 
+	if options.PlaylistRange != "" {
+		command = command.PlaylistItems(options.PlaylistRange)
+	}
+
 	runtime.LogPrintf(app.ctx, "Download Options: %v", options)
+	runtime.LogPrintf(app.ctx, "Yt-dlp command: %v", command.BuildCommand(app.ctx))
 
 	result, err := command.Run(context.Background(), options.Url)
 	if err != nil {
