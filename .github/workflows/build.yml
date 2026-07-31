@@ -50,6 +50,7 @@ jobs:
         run: wails build -tags webkit2_41 -upx -platform ${{ matrix.platform }}
 
       - name: Build Application
+        if: runner.os != 'Linux'
         run: wails build -platform ${{ matrix.platform }}
 
       - name: Upload Artifact
