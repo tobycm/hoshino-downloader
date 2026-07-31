@@ -36,6 +36,7 @@ jobs:
         uses: oven-sh/setup-bun@v2
 
       - name: Install UPX
+        if: runner.os != 'MacOS'
         uses: crazy-max/ghaction-upx@v4
         with:
           install-only: true
