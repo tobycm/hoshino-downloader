@@ -1,5 +1,6 @@
 import { Button, Code, Modal, Stack, Title } from "@mantine/core";
 import { useQuery } from "@tanstack/react-query";
+import { useEffect } from "react";
 import { GetDebugInfo } from "../../wailsjs/go/main/App";
 
 // TODO: default download options
@@ -9,6 +10,12 @@ export default function SettingsModal({ opened, onClose, openToolsModal }: { ope
     queryKey: ["GetDebugInfo"],
     queryFn: () => GetDebugInfo(),
   });
+
+  useEffect(() => {
+    if (!opened) return;
+
+    debugInfo.refetch();
+  }, [opened]);
 
   return (
     <Modal opened={opened} onClose={onClose} centered>

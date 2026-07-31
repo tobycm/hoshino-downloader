@@ -63,6 +63,13 @@ export default function DownloadModal({ opened, onClose }: { opened: boolean; on
   });
 
   useEffect(() => {
+    if (!opened) return;
+
+    toolPaths.refetch();
+    sensibleDownloadFolder.refetch();
+  }, [opened]);
+
+  useEffect(() => {
     if (!sensibleDownloadFolder.data) return;
 
     form.setFieldValue("outputFolder", sensibleDownloadFolder.data);

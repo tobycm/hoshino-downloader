@@ -1,19 +1,34 @@
-# README
+# Hoshino Downloader
 
-## About
+downloading a YouTube video in 2026 has been hell
 
-This is the official Wails React-TS template.
+![demo 2](assets/demo2.png)
 
-You can configure the project by editing `wails.json`. More information about the project settings can be found
-here: https://wails.io/docs/reference/project-config
+## Dependencies
+
+- [Go 1.25+](https://go.dev/)
+- [Wails](https://wails.io/)
+- [Bun](https://bun.sh/)
 
 ## Live Development
 
-To run in live development mode, run `wails dev` in the project directory. This will run a Vite development
-server that will provide very fast hot reload of your frontend changes. If you want to develop in a browser
-and have access to your Go methods, there is also a dev server that runs on http://localhost:34115. Connect
-to this in your browser, and you can call your Go code from devtools.
+Run `wails dev` in the project directory
+
+If you are on Linux and it complains about WebKit, add `-tags webkit2_41` to the command. (eg. `wails dev -tags webkit2_41`)
 
 ## Building
 
-To build a redistributable, production mode package, use `wails build`.
+Run `wails build` in the project directory.
+
+If you are on Linux and it complains about WebKit, add `-tags webkit2_41` to the command. (eg. `wails build -tags webkit2_41`)
+
+Add `-upx` to compress the final executable. (Windows and Linux only)
+
+Add `-platform <platform>` to cross-compile for a specific platform.
+
+## TODO
+
+- Queue
+- Progress
+- Update tools
+- Default Settings
