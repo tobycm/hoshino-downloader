@@ -9,6 +9,8 @@ export function Download(arg1:main.DownloadOptions):Promise<string>;
 
 export function GetOutputFolder():Promise<string>;
 
+export function GetSensibleDownloadFolder():Promise<string>;
+
 export function GetToolPaths():Promise<tools.ToolPaths>;
 
 export function InstallDeno():Promise<string>;

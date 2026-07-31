@@ -5,6 +5,8 @@ import (
 	"io"
 	"os"
 	"path"
+	"path/filepath"
+	"runtime"
 )
 
 func CopyAllFilesInFolder(src, dst string) error {
@@ -51,4 +53,17 @@ func AddFolderToPATHEnv(folder string) error {
 	currentPath := os.Getenv("PATH")
 	newPath := folder + string(os.PathListSeparator) + currentPath
 	return os.Setenv("PATH", newPath)
+}
+
+func GetSensibleDownloadFolder() string {
+	switch runtime.GOOS {
+	case "windows":
+		return filepath.Join(os.Getenv("USERPROFILE"), "Downloads")
+	case "darwin":
+		return filepath.Join(os.Getenv("HOME"), "Downloads")
+	case "linux":
+		return filepath.Join(os.Getenv("HOME"), "Downloads")
+	default:
+		return filepath.Join(os.Getenv("HOME"), "Downloads")
+	}
 }

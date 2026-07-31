@@ -7,19 +7,19 @@ import { useEffect } from "react";
 import { useShallow } from "zustand/shallow";
 import { CheckTools } from "../wailsjs/go/main/App";
 import DownloadModal from "./components/DownloadModal";
-import MissingToolsModal from "./components/MissingToolsModal";
+import ToolsModal from "./components/ToolsModal";
 import { useAppState } from "./states/app";
-import { useTools, type Tool } from "./states/tools";
 
-import { IconHome, IconSettings } from "@tabler/icons-react";
+import { IconSettings } from "@tabler/icons-react";
 import hoshino from "./assets/hoshino smol.jpg";
-
-const tools = ["ytdlp", "ffmpeg"];
-const jsRuntimes = ["deno", "bun", "node"];
+import SettingsModal from "./components/SettingsModal";
+import { tools } from "./utils/tools";
 
 function App() {
   const [downloadModalOpened, downloadModalControls] = useDisclosure();
-  const [missingToolsModalOpened, missingToolsModalControls] = useDisclosure();
+  const [toolsModalOpened, toolsModalControls] = useDisclosure();
+  const [settingsModalOpened, settingsModalControls] = useDisclosure();
+
   const url = useAppState((state) => state.url);
   const setUrl = useAppState(useShallow((state) => state.setUrl));
   const toolPaths = useQuery({
@@ -27,29 +27,10 @@ function App() {
     queryFn: () => CheckTools(false),
   });
 
-  const setTools = useTools((state) => state.setTools);
-  const setMissing = useTools((state) => state.setMissing);
-
   useEffect(() => {
     if (!toolPaths.data) return;
-
-    setTools({
-      ytdlp: toolPaths.data.ytdlp,
-      ffmpeg: toolPaths.data.ffmpeg,
-      deno: toolPaths.data.deno,
-      bun: toolPaths.data.bun,
-      node: toolPaths.data.node,
-    });
-  }, [toolPaths.data]);
-
-  useEffect(() => {
-    if (!toolPaths.data) return;
-
-    const jsRuntime = jsRuntimes.find((runtime) => toolPaths.data?.[runtime as keyof typeof toolPaths.data]);
 
     const missing = [...tools.filter((tool) => !toolPaths.data?.[tool as keyof typeof toolPaths.data])];
-
-    if (!jsRuntime) missing.push("deno");
 
     if (missing.length > 0) {
       notifications.show({
@@ -57,9 +38,7 @@ function App() {
         message: `The following tools are missing: ${missing.join(", ")}`,
       });
 
-      setMissing(missing as Tool[]);
-
-      missingToolsModalControls.open();
+      toolsModalControls.open();
     } else {
       notifications.show({
         title: "All Tools Found",
@@ -89,14 +68,9 @@ function App() {
           <NavLink
             href="#required-for-focus"
             styles={{ label: { fontSize: "1.25rem", fontWeight: 900 } }}
-            label={sidebarHovered ? "Home" : undefined}
-            leftSection={<IconHome size={40} />}
-          />
-          <NavLink
-            href="#required-for-focus"
-            styles={{ label: { fontSize: "1.25rem", fontWeight: 900 } }}
             fz="xl"
             label={sidebarHovered ? "Settings" : undefined}
+            onClick={settingsModalControls.open}
             leftSection={<IconSettings size={40} />}
           />
         </Stack>
@@ -104,8 +78,8 @@ function App() {
       <AppShell.Main>
         <Stack mih="100vh" pb="30vh" w="calc(100vw - 80px)" justify="center" align="center" c="white" ta="center">
           <DownloadModal opened={downloadModalOpened} onClose={downloadModalControls.close} />
-          <MissingToolsModal opened={missingToolsModalOpened} onClose={missingToolsModalControls.close} />
-
+          <ToolsModal opened={toolsModalOpened} onClose={toolsModalControls.close} />
+          <SettingsModal opened={settingsModalOpened} onClose={settingsModalControls.close} openToolsModal={toolsModalControls.open} />
           <Image src={hoshino} w="20vw" h="20vw" bdrs="xl" />
           <Title>Hoshino Downloader</Title>
 

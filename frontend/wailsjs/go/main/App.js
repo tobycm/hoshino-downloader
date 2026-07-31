@@ -14,6 +14,10 @@ export function GetOutputFolder() {
   return window['go']['main']['App']['GetOutputFolder']();
 }
 
+export function GetSensibleDownloadFolder() {
+  return window['go']['main']['App']['GetSensibleDownloadFolder']();
+}
+
 export function GetToolPaths() {
   return window['go']['main']['App']['GetToolPaths']();
 }

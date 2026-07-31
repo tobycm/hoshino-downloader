@@ -17,8 +17,6 @@ export namespace main {
 	    YtdlpPath: string;
 	    FfmpegPath: string;
 	    DenoPath: string;
-	    BunPath: string;
-	    NodePath: string;
 	
 	    static createFrom(source: any = {}) {
 	        return new DownloadOptions(source);
@@ -42,8 +40,6 @@ export namespace main {
 	        this.YtdlpPath = source["YtdlpPath"];
 	        this.FfmpegPath = source["FfmpegPath"];
 	        this.DenoPath = source["DenoPath"];
-	        this.BunPath = source["BunPath"];
-	        this.NodePath = source["NodePath"];
 	    }
 	}
 
@@ -55,8 +51,6 @@ export namespace tools {
 	    ytdlp: string;
 	    ffmpeg: string;
 	    deno: string;
-	    bun: string;
-	    node: string;
 	
 	    static createFrom(source: any = {}) {
 	        return new ToolPaths(source);
@@ -67,8 +61,6 @@ export namespace tools {
 	        this.ytdlp = source["ytdlp"];
 	        this.ffmpeg = source["ffmpeg"];
 	        this.deno = source["deno"];
-	        this.bun = source["bun"];
-	        this.node = source["node"];
 	    }
 	}
 

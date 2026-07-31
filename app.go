@@ -114,8 +114,6 @@ type DownloadOptions struct {
 	YtdlpPath  string
 	FfmpegPath string
 	DenoPath   string
-	BunPath    string
-	NodePath   string
 }
 
 func (app *App) Download(options DownloadOptions) string {
@@ -139,14 +137,6 @@ func (app *App) Download(options DownloadOptions) string {
 
 	if options.DenoPath != "" {
 		command = command.JsRuntimes("deno")
-	}
-
-	if options.BunPath != "" {
-		command = command.JsRuntimes("bun")
-	}
-
-	if options.NodePath != "" {
-		command = command.JsRuntimes("node")
 	}
 
 	if options.ExtractAudio {
@@ -198,4 +188,8 @@ func (app *App) Download(options DownloadOptions) string {
 	runtime.LogPrintf(app.ctx, "Download completed: %v", result.OutputLogs)
 
 	return fmt.Sprintf("Download completed: %v", result.OutputLogs)
+}
+
+func (app *App) GetSensibleDownloadFolder() string {
+	return utils.GetSensibleDownloadFolder()
 }

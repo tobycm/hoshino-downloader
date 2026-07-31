@@ -18,13 +18,12 @@ import {
 import { isNotEmpty, useForm } from "@mantine/form";
 import { notifications } from "@mantine/notifications";
 import { IconClipboard, IconFolderOpen } from "@tabler/icons-react";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
-import { Download, GetOutputFolder } from "../../wailsjs/go/main/App";
+import { CheckTools, Download, GetOutputFolder, GetSensibleDownloadFolder } from "../../wailsjs/go/main/App";
 import { ClipboardGetText } from "../../wailsjs/runtime";
 import { useAppState } from "../states/app";
-import { useTools } from "../states/tools";
-import { audioFormats, audioQualities, videoFormats, videoQualities } from "../utils";
+import { audioFormats, audioQualities, videoFormats, videoQualities } from "../utils/constants";
 
 export default function DownloadModal({ opened, onClose }: { opened: boolean; onClose: () => void }) {
   const form = useForm({
@@ -53,7 +52,21 @@ export default function DownloadModal({ opened, onClose }: { opened: boolean; on
 
   const first = useRef(true);
 
-  const tools = useTools((state) => state);
+  const toolPaths = useQuery({
+    queryKey: ["CheckTools"],
+    queryFn: () => CheckTools(false),
+  });
+
+  const sensibleDownloadFolder = useQuery({
+    queryKey: ["GetSensibleDownloadFolder"],
+    queryFn: () => GetSensibleDownloadFolder(),
+  });
+
+  useEffect(() => {
+    if (!sensibleDownloadFolder.data) return;
+
+    form.setFieldValue("outputFolder", sensibleDownloadFolder.data);
+  }, [sensibleDownloadFolder.data]);
 
   const getOutputFolder = useMutation({
     mutationFn: GetOutputFolder,
@@ -88,6 +101,10 @@ export default function DownloadModal({ opened, onClose }: { opened: boolean; on
 
   const download = useMutation({
     mutationFn: async (values: typeof form.values) => {
+      if (!toolPaths.data) {
+        throw new Error("Tools not found");
+      }
+
       const payload: Parameters<typeof Download>[0] = {
         Url: values.url,
         OutputFolder: values.outputFolder,
@@ -106,11 +123,9 @@ export default function DownloadModal({ opened, onClose }: { opened: boolean; on
         AudioQuality: values.quality,
         RemuxVideo: downloadMode === "audio" ? "" : values.format,
 
-        YtdlpPath: tools.ytdlp,
-        FfmpegPath: tools.ffmpeg,
-        DenoPath: tools.deno,
-        BunPath: tools.bun,
-        NodePath: tools.node,
+        YtdlpPath: toolPaths.data.ytdlp,
+        FfmpegPath: toolPaths.data.ffmpeg,
+        DenoPath: toolPaths.data.deno,
       };
 
       console.log(values);

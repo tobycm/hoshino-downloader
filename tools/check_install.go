@@ -8,8 +8,6 @@ type ToolPaths struct {
 	Ytdlp  string `json:"ytdlp"`
 	FFmpeg string `json:"ffmpeg"`
 	Deno   string `json:"deno"`
-	Bun    string `json:"bun"`
-	Node   string `json:"node"`
 }
 
 func GetPaths() ToolPaths {
@@ -27,14 +25,6 @@ func GetPaths() ToolPaths {
 	paths.Deno, err = exec.LookPath("deno")
 	if err != nil || paths.Deno == "" {
 		paths.Deno, _ = exec.LookPath("deno.exe")
-	}
-	paths.Bun, err = exec.LookPath("bun")
-	if err != nil || paths.Bun == "" {
-		paths.Bun, _ = exec.LookPath("bun.exe")
-	}
-	paths.Node, err = exec.LookPath("node")
-	if err != nil || paths.Node == "" {
-		paths.Node, _ = exec.LookPath("node.exe")
 	}
 
 	return paths
