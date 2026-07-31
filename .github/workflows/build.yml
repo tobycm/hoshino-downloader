@@ -2,8 +2,8 @@ name: Wails Build
 
 on:
   push:
-    tags:
-      - "v*" # Triggers on tags like v1.0.0
+    # tags:
+    #   - "v*" # Triggers on tags like v1.0.0
 
 jobs:
   build:
