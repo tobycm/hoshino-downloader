@@ -1,11 +1,13 @@
 package tools
 
 import (
+	"bytes"
 	"context"
 	"fmt"
 	"io"
 	"net/http"
 	"os"
+	"os/exec"
 	"path"
 	"runtime"
 	"strings"
@@ -15,11 +17,9 @@ import (
 
 var (
 	versionLink = "https://dl.deno.land/release-latest.txt"
-	downloadUrl = "https://dl.deno.land/release/%s/deno-%s.zip"
+	downloadUrl = "https://dl.deno.land/release/v%s/deno-%s.zip"
 )
 
-// TODO: finish deno
-// TODO: need loading for install button
 // TODO: update tools
 // TODO: simplier tool download
 // TODO: progress
@@ -30,6 +30,36 @@ var (
 // "Darwin arm64") target="aarch64-apple-darwin" ;;
 // "Linux aarch64") target="aarch64-unknown-linux-gnu" ;;
 // *) target="x86_64-unknown-linux-gnu" ;;
+
+func GetCurrentDenoVersion() (string, error) {
+	var output bytes.Buffer
+
+	command := exec.Command("deno", "--version")
+	command.Stdout = &output
+
+	if err := command.Run(); err != nil {
+		return "", fmt.Errorf("Error occurred while fetching deno version: %v", err)
+	}
+
+	// fmt.Printf("deno version: %s\n", strings.Split(strings.Split(output.String(), "\n")[0], " ")[2])
+
+	return strings.Split(strings.Split(output.String(), "\n")[0], " ")[1], nil
+}
+
+func GetLatestDenoVersion() (string, error) {
+	versionResponse, err := http.Get(versionLink)
+	if err != nil {
+		return "", fmt.Errorf("[GetLatestDenoVersion] failed to get version: %w", err)
+	}
+	defer versionResponse.Body.Close()
+
+	version, err := io.ReadAll(versionResponse.Body)
+	if err != nil {
+		return "", fmt.Errorf("[GetLatestDenoVersion] failed to read version: %w", err)
+	}
+
+	return strings.Trim(strings.TrimSpace(string(version)), "v"), nil
+}
 
 func InstallDeno(ctx context.Context) error {
 	var target string
@@ -55,18 +85,12 @@ func InstallDeno(ctx context.Context) error {
 		return fmt.Errorf("[install_deno] platform not supported")
 	}
 
-	versionResponse, err := http.Get(versionLink)
+	version, err := GetLatestDenoVersion()
 	if err != nil {
-		return fmt.Errorf("[install_deno] failed to get version: %w", err)
-	}
-	defer versionResponse.Body.Close()
-
-	version, err := io.ReadAll(versionResponse.Body)
-	if err != nil {
-		return fmt.Errorf("[install_deno] failed to read version: %w", err)
+		return fmt.Errorf("[install_deno] failed to get latest deno version: %w", err)
 	}
 
-	url := fmt.Sprintf(downloadUrl, strings.TrimSpace(string(version)), target)
+	url := fmt.Sprintf(downloadUrl, version, target)
 
 	toolsFolder, err := GetToolsFolder()
 	if err != nil {

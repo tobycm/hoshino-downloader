@@ -19,19 +19,19 @@ export default function ToolsModal({ opened, onClose }: { opened: boolean; onClo
   }, [opened]);
 
   const installFfmpeg = useQuery({
-    queryKey: ["install_ffmpeg"],
+    queryKey: ["InstallFfmpeg"],
     queryFn: InstallFfmpeg,
     enabled: false,
   });
 
   const installYtdlp = useQuery({
-    queryKey: ["install_ytdlp"],
+    queryKey: ["InstallYtdlp"],
     queryFn: InstallYtdlp,
     enabled: false,
   });
 
   const installDeno = useQuery({
-    queryKey: ["install_deno"],
+    queryKey: ["InstallDeno"],
     queryFn: InstallDeno,
     enabled: false,
   });

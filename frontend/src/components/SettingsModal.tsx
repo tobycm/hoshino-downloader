@@ -25,19 +25,19 @@ export default function SettingsModal({ opened, onClose, openToolsModal }: { ope
   });
 
   const installFfmpeg = useQuery({
-    queryKey: ["install_ffmpeg"],
+    queryKey: ["InstallFfmpeg"],
     queryFn: InstallFfmpeg,
     enabled: false,
   });
 
   const installYtdlp = useQuery({
-    queryKey: ["install_ytdlp"],
+    queryKey: ["InstallYtdlp"],
     queryFn: InstallYtdlp,
     enabled: false,
   });
 
   const installDeno = useQuery({
-    queryKey: ["install_deno"],
+    queryKey: ["InstallDeno"],
     queryFn: InstallDeno,
     enabled: false,
   });
@@ -64,12 +64,19 @@ export default function SettingsModal({ opened, onClose, openToolsModal }: { ope
               <Button
                 disabled={updateInfo.isFetching || installFfmpeg.isLoading || installYtdlp.isLoading || installDeno.isLoading || !canUpdate}
                 onClick={async () => {
+                  if (!updateInfo.data?.CanUpdateYtdlp || !updateInfo.data?.CanUpdateDeno) return;
+
+                  if (updateInfo.data?.CanUpdateDeno) {
+                    await installDeno.refetch();
+                  }
+
                   if (updateInfo.data?.CanUpdateYtdlp) {
                     await installYtdlp.refetch();
-                    await queryClient.invalidateQueries({ queryKey: ["GetUpdateInfo", "GetToolPaths", "GetDebugInfo"] });
-                    debugInfo.refetch();
-                    updateInfo.refetch();
                   }
+
+                  await queryClient.invalidateQueries({ queryKey: ["GetUpdateInfo", "GetToolPaths", "GetDebugInfo"] });
+                  debugInfo.refetch();
+                  updateInfo.refetch();
                 }}>
                 Update all
               </Button>

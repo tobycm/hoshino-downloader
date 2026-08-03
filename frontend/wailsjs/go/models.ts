@@ -8,6 +8,9 @@ export namespace main {
 	    YtdlpVersion: string;
 	    LatestYtdlpVersion: string;
 	    CanUpdateYtdlp: boolean;
+	    DenoVersion: string;
+	    LatestDenoVersion: string;
+	    CanUpdateDeno: boolean;
 	    FfmpegVersion: string;
 	
 	    static createFrom(source: any = {}) {
@@ -23,6 +26,9 @@ export namespace main {
 	        this.YtdlpVersion = source["YtdlpVersion"];
 	        this.LatestYtdlpVersion = source["LatestYtdlpVersion"];
 	        this.CanUpdateYtdlp = source["CanUpdateYtdlp"];
+	        this.DenoVersion = source["DenoVersion"];
+	        this.LatestDenoVersion = source["LatestDenoVersion"];
+	        this.CanUpdateDeno = source["CanUpdateDeno"];
 	        this.FfmpegVersion = source["FfmpegVersion"];
 	    }
 	
@@ -90,6 +96,9 @@ export namespace main {
 	    CurrentYtdlpVersion: string;
 	    LatestYtdlpVersion: string;
 	    CanUpdateYtdlp: boolean;
+	    CurrentDenoVersion: string;
+	    LatestDenoVersion: string;
+	    CanUpdateDeno: boolean;
 	
 	    static createFrom(source: any = {}) {
 	        return new UpdateInfo(source);
@@ -100,6 +109,9 @@ export namespace main {
 	        this.CurrentYtdlpVersion = source["CurrentYtdlpVersion"];
 	        this.LatestYtdlpVersion = source["LatestYtdlpVersion"];
 	        this.CanUpdateYtdlp = source["CanUpdateYtdlp"];
+	        this.CurrentDenoVersion = source["CurrentDenoVersion"];
+	        this.LatestDenoVersion = source["LatestDenoVersion"];
+	        this.CanUpdateDeno = source["CanUpdateDeno"];
 	    }
 	}
 

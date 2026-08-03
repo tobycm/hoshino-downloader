@@ -52,7 +52,12 @@ type DebugInfo struct {
 	YtdlpVersion       string
 	LatestYtdlpVersion string
 	CanUpdateYtdlp     bool
-	FfmpegVersion      string
+
+	DenoVersion       string
+	LatestDenoVersion string
+	CanUpdateDeno     bool
+
+	FfmpegVersion string
 }
 
 func (app *App) GetDebugInfo() DebugInfo {
@@ -74,6 +79,18 @@ func (app *App) GetDebugInfo() DebugInfo {
 		return DebugInfo{}
 	}
 
+	denoVersion, err := tools.GetCurrentDenoVersion()
+	if err != nil {
+		runtime.LogPrintf(app.ctx, "Error occurred while fetching deno version: %v", err)
+		return DebugInfo{}
+	}
+
+	latestDenoVersion, err := tools.GetLatestDenoVersion()
+	if err != nil {
+		runtime.LogPrintf(app.ctx, "Error occurred while fetching latest deno version: %v", err)
+		return DebugInfo{}
+	}
+
 	ffmpegVersion, err := tools.GetCurrentFfmpegVersion()
 	if err != nil {
 		runtime.LogPrintf(app.ctx, "Error occurred while fetching ffmpeg version: %v", err)
@@ -90,6 +107,9 @@ func (app *App) GetDebugInfo() DebugInfo {
 		YtdlpVersion:       ytdlpVersion,
 		LatestYtdlpVersion: latestYtdlpVersion,
 		CanUpdateYtdlp:     ytdlpVersion < latestYtdlpVersion,
+		DenoVersion:        denoVersion,
+		LatestDenoVersion:  latestDenoVersion,
+		CanUpdateDeno:      denoVersion < latestDenoVersion,
 		FfmpegVersion:      ffmpegVersion,
 	}
 }
@@ -237,6 +257,10 @@ type UpdateInfo struct {
 	CurrentYtdlpVersion string
 	LatestYtdlpVersion  string
 	CanUpdateYtdlp      bool
+
+	CurrentDenoVersion string
+	LatestDenoVersion  string
+	CanUpdateDeno      bool
 }
 
 func (app *App) GetUpdateInfo() UpdateInfo {
@@ -252,9 +276,24 @@ func (app *App) GetUpdateInfo() UpdateInfo {
 		return UpdateInfo{}
 	}
 
+	currentDenoVersion, err := tools.GetCurrentDenoVersion()
+	if err != nil {
+		runtime.LogPrintf(app.ctx, "Error occurred while fetching current deno version: %v", err)
+		return UpdateInfo{}
+	}
+
+	latestDenoVersion, err := tools.GetLatestDenoVersion()
+	if err != nil {
+		runtime.LogPrintf(app.ctx, "Error occurred while fetching latest deno version: %v", err)
+		return UpdateInfo{}
+	}
+
 	return UpdateInfo{
 		CurrentYtdlpVersion: currentYtdlpVersion,
 		LatestYtdlpVersion:  latestYtdlpVersion,
 		CanUpdateYtdlp:      currentYtdlpVersion < latestYtdlpVersion,
+		CurrentDenoVersion:  currentDenoVersion,
+		LatestDenoVersion:   latestDenoVersion,
+		CanUpdateDeno:       currentDenoVersion < latestDenoVersion,
 	}
 }
