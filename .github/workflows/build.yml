@@ -36,14 +36,14 @@ jobs:
         uses: oven-sh/setup-bun@v2
 
       - name: Install UPX
-        if: runner.os != 'MacOS'
+        if: runner.platform != 'Darwin'
         uses: crazy-max/ghaction-upx@v4
         with:
           install-only: true
 
       # Linux requires specific WebKit and GTK dependencies to compile
       - name: Install Linux Dependencies
-        if: runner.os == 'Linux'
+        if: runner.platform == 'Linux'
         run: |
           sudo apt-get update
           sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.1-dev build-essential pkg-config
@@ -52,17 +52,31 @@ jobs:
         run: go install github.com/wailsapp/wails/v2/cmd/wails@latest
 
       - name: Build Application on Linux
-        if: runner.os == 'Linux'
+        if: runner.platform == 'linux'
         run: wails build -tags webkit2_41 -upx -platform ${{ matrix.platform }}
 
-      - name: Build Application
-        if: runner.os != 'Linux'
+      - name: Build Application on Darwin
+        if: runner.platform == 'darwin'
+        run: wails build -platform ${{ matrix.platform }}
+
+      - name: Build Application on Windows
+        if: runner.platform != 'win32'
         run: wails build -upx -platform ${{ matrix.platform }}
 
-      - name: Upload Artifact
+      - name: Upload Artifact on Windows
+        if: runner.platform == 'win32'
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.artifact_name }}
-          path: build/bin/
+          path: build/bin/hoshino-downloader.exe
+          retention-days: 7
+          archive: false
+
+      - name: Upload Artifact
+        if: runner.platform != 'win32'
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact_name }}
+          path: build/bin/hoshino-downloader
           retention-days: 7
           archive: false

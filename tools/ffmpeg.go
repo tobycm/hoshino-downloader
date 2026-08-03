@@ -139,3 +139,7 @@ func InstallFfprobe() error { // this is probably only for mac, as btbn builds i
 }
 
 // https://evermeet.cx/ffmpeg/getrelease/ffprobe/zip
+
+func CheckForUpdateFfmpeg() bool {
+	return false
+}
