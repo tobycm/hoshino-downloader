@@ -43,7 +43,7 @@ jobs:
 
       # Linux requires specific WebKit and GTK dependencies to compile
       - name: Install Linux Dependencies
-        if: runner.platform == 'Linux'
+        if: runner.platform == 'linux'
         run: |
           sudo apt-get update
           sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.1-dev build-essential pkg-config
