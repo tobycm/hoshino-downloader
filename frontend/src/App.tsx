@@ -5,7 +5,7 @@ import { notifications } from "@mantine/notifications";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { useShallow } from "zustand/shallow";
-import { GetToolPaths } from "../wailsjs/go/main/App";
+import { GetToolPaths, GetUpdateInfo } from "../wailsjs/go/main/App";
 import DownloadModal from "./components/DownloadModal";
 import ToolsModal from "./components/ToolsModal";
 import { useAppState } from "./states/app";
@@ -46,6 +46,22 @@ function App() {
       });
     }
   }, [toolPaths.data]);
+
+  const updateInfo = useQuery({
+    queryKey: ["GetUpdateInfo"],
+    queryFn: () => GetUpdateInfo(),
+  });
+
+  useEffect(() => {
+    if (!updateInfo.data) return;
+
+    if (updateInfo.data.CanUpdateYtdlp) {
+      notifications.show({
+        title: "Update Available",
+        message: `A new version of ytdlp is available: ${updateInfo.data.LatestYtdlpVersion}. Open the Settings page to update it!`,
+      });
+    }
+  }, [updateInfo.data]);
 
   const { ref: sidebarRef, hovered: sidebarHovered } = useHover();
 

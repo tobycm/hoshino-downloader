@@ -232,3 +232,29 @@ func (app *App) Download(options DownloadOptions) string {
 func (app *App) GetSensibleDownloadFolder() string {
 	return utils.GetSensibleDownloadFolder()
 }
+
+type UpdateInfo struct {
+	CurrentYtdlpVersion string
+	LatestYtdlpVersion  string
+	CanUpdateYtdlp      bool
+}
+
+func (app *App) GetUpdateInfo() UpdateInfo {
+	currentYtdlpVersion, err := tools.GetCurrentYtdlpVersion(app.ctx)
+	if err != nil {
+		runtime.LogPrintf(app.ctx, "Error occurred while fetching ytdlp version: %v", err)
+		return UpdateInfo{}
+	}
+
+	latestYtdlpVersion, err := tools.GetLatestYtdlpVersion()
+	if err != nil {
+		runtime.LogPrintf(app.ctx, "Error occurred while fetching latest ytdlp version: %v", err)
+		return UpdateInfo{}
+	}
+
+	return UpdateInfo{
+		CurrentYtdlpVersion: currentYtdlpVersion,
+		LatestYtdlpVersion:  latestYtdlpVersion,
+		CanUpdateYtdlp:      currentYtdlpVersion < latestYtdlpVersion,
+	}
+}

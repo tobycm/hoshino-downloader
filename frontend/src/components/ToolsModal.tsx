@@ -1,5 +1,6 @@
-import { Button, List, Loader, Modal, Stack, Text, Title } from "@mantine/core";
+import { Button, Group, List, Loader, Modal, Stack, Text, Title, Tooltip } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
+import { IconDownload } from "@tabler/icons-react";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { GetToolPaths, InstallDeno, InstallFfmpeg, InstallYtdlp } from "../../wailsjs/go/main/App";
@@ -48,21 +49,38 @@ export default function ToolsModal({ opened, onClose }: { opened: boolean; onClo
             <List>
               {!toolPaths.data.ffmpeg && (
                 <List.Item>
-                  ffmpeg: <MissingTool isFetching={installFfmpeg.isFetching} isInstalled={!!installFfmpeg.data} />
+                  <MissingTool
+                    name="ffmpeg"
+                    isFetching={installFfmpeg.isFetching}
+                    isInstalled={!!installFfmpeg.data}
+                    redownload={() => installFfmpeg.refetch()}
+                  />
                 </List.Item>
               )}
               {!toolPaths.data.ytdlp && (
                 <List.Item>
-                  ytdlp: <MissingTool isFetching={installYtdlp.isFetching} isInstalled={!!installYtdlp.data} />
+                  <MissingTool
+                    name="ytdlp"
+                    isFetching={installYtdlp.isFetching}
+                    isInstalled={!!installYtdlp.data}
+                    redownload={() => installYtdlp.refetch()}
+                  />
                 </List.Item>
               )}
               {!toolPaths.data.deno && (
                 <List.Item>
-                  deno: <MissingTool isFetching={installDeno.isFetching} isInstalled={!!installDeno.data} />
+                  <MissingTool
+                    name="deno"
+                    isFetching={installDeno.isFetching}
+                    isInstalled={!!installDeno.data}
+                    redownload={() => installDeno.refetch()}
+                  />
                 </List.Item>
               )}
             </List>
             <Button
+              disabled={installFfmpeg.isFetching || installYtdlp.isFetching || installDeno.isFetching}
+              leftSection={<IconDownload />}
               onClick={async () => {
                 const promises = [];
                 if (!toolPaths.data.ffmpeg) {
@@ -82,18 +100,48 @@ export default function ToolsModal({ opened, onClose }: { opened: boolean; onClo
                 });
                 onClose();
               }}>
-              Install the tools?
+              Install
             </Button>
           </Stack>
         ) : (
           <Stack>
             <Title order={3}>All tools are installed!</Title>
 
-            <Text>Tool locations:</Text>
-            <List>
-              {toolPaths.data?.ffmpeg && <List.Item>ffmpeg: {toolPaths.data.ffmpeg}</List.Item>}
-              {toolPaths.data?.ytdlp && <List.Item>ytdlp: {toolPaths.data.ytdlp}</List.Item>}
-              {toolPaths.data?.deno && <List.Item>deno: {toolPaths.data.deno}</List.Item>}
+            <Text>Tools info:</Text>
+            <List spacing="md">
+              {toolPaths.data?.ffmpeg && (
+                <List.Item>
+                  <MissingTool
+                    name="ffmpeg"
+                    isFetching={installFfmpeg.isFetching}
+                    isInstalled
+                    location={toolPaths.data.ffmpeg}
+                    redownload={() => installFfmpeg.refetch()}
+                  />
+                </List.Item>
+              )}
+              {toolPaths.data?.ytdlp && (
+                <List.Item>
+                  <MissingTool
+                    name="ytdlp"
+                    isFetching={installYtdlp.isFetching}
+                    isInstalled
+                    location={toolPaths.data.ytdlp}
+                    redownload={() => installYtdlp.refetch()}
+                  />
+                </List.Item>
+              )}
+              {toolPaths.data?.deno && (
+                <List.Item>
+                  <MissingTool
+                    name="deno"
+                    isFetching={installDeno.isFetching}
+                    isInstalled
+                    location={toolPaths.data.deno}
+                    redownload={() => installDeno.refetch()}
+                  />
+                </List.Item>
+              )}
             </List>
           </Stack>
         )
@@ -104,18 +152,46 @@ export default function ToolsModal({ opened, onClose }: { opened: boolean; onClo
   );
 }
 
-function MissingTool({ isFetching, isInstalled }: { isFetching: boolean; isInstalled: boolean | null }) {
+function MissingTool({
+  name,
+  isFetching,
+  isInstalled,
+  location,
+  redownload,
+}: {
+  name: string;
+  isFetching: boolean;
+  isInstalled: boolean | null;
+  location?: string;
+  redownload: () => void;
+}) {
   if (isFetching) {
     return (
-      <>
+      <Group>
+        <Text>{name}:</Text>
         <Text>Installing...</Text>
         <Loader m="md" size="xs" />
-      </>
+      </Group>
     );
   }
   if (isInstalled) {
-    return <Text>Installed ✅</Text>;
+    return (
+      <Group>
+        <Text>{name}:</Text>
+        <Tooltip label={"Location: " + location}>
+          <Text>Installed ✅</Text>
+        </Tooltip>
+        <Button variant="outline" onClick={redownload} leftSection={<IconDownload />}>
+          Redownload
+        </Button>
+      </Group>
+    );
   }
 
-  return <Text>Not installed ❌</Text>;
+  return (
+    <Group>
+      <Text>{name}:</Text>
+      <Text>Not installed ❌</Text>
+    </Group>
+  );
 }

@@ -22,6 +22,10 @@ export function GetToolPaths() {
   return window['go']['main']['App']['GetToolPaths']();
 }
 
+export function GetUpdateInfo() {
+  return window['go']['main']['App']['GetUpdateInfo']();
+}
+
 export function InstallDeno() {
   return window['go']['main']['App']['InstallDeno']();
 }

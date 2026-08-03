@@ -13,6 +13,8 @@ export function GetSensibleDownloadFolder():Promise<string>;
 
 export function GetToolPaths():Promise<tools.ToolPaths>;
 
+export function GetUpdateInfo():Promise<main.UpdateInfo>;
+
 export function InstallDeno():Promise<string>;
 
 export function InstallFfmpeg():Promise<string>;

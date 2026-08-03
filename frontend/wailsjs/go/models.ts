@@ -86,6 +86,22 @@ export namespace main {
 	        this.DenoPath = source["DenoPath"];
 	    }
 	}
+	export class UpdateInfo {
+	    CurrentYtdlpVersion: string;
+	    LatestYtdlpVersion: string;
+	    CanUpdateYtdlp: boolean;
+	
+	    static createFrom(source: any = {}) {
+	        return new UpdateInfo(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.CurrentYtdlpVersion = source["CurrentYtdlpVersion"];
+	        this.LatestYtdlpVersion = source["LatestYtdlpVersion"];
+	        this.CanUpdateYtdlp = source["CanUpdateYtdlp"];
+	    }
+	}
 
 }
 
