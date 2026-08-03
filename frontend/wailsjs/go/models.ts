@@ -5,6 +5,10 @@ export namespace main {
 	    ToolFolder: string;
 	    OS: string;
 	    Arch: string;
+	    YtdlpVersion: string;
+	    LatestYtdlpVersion: string;
+	    CanUpdateYtdlp: boolean;
+	    FfmpegVersion: string;
 	
 	    static createFrom(source: any = {}) {
 	        return new DebugInfo(source);
@@ -16,6 +20,10 @@ export namespace main {
 	        this.ToolFolder = source["ToolFolder"];
 	        this.OS = source["OS"];
 	        this.Arch = source["Arch"];
+	        this.YtdlpVersion = source["YtdlpVersion"];
+	        this.LatestYtdlpVersion = source["LatestYtdlpVersion"];
+	        this.CanUpdateYtdlp = source["CanUpdateYtdlp"];
+	        this.FfmpegVersion = source["FfmpegVersion"];
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {

@@ -1,12 +1,17 @@
 package tools
 
 import (
+	"context"
+	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
 	"os"
 	"path"
 	"runtime"
+	"strings"
+
+	"github.com/lrstanley/go-ytdlp"
 )
 
 func InstallYtdlp() error {
@@ -59,4 +64,40 @@ func InstallYtdlp() error {
 	os.Chmod(path.Join(toolsFolder, filename), 0755)
 
 	return nil
+}
+
+func CheckForUpdateYtdlp() bool {
+	return false
+}
+
+type GithubReleaseVersion struct {
+	TagName string `json:"tag_name"`
+}
+
+func GetLatestYtdlpVersion() (string, error) {
+	url := "https://api.github.com/repos/yt-dlp/yt-dlp/releases/latest"
+
+	response, err := http.Get(url)
+	if err != nil {
+		return "", fmt.Errorf("Error occurred while fetching latest ytdlp version: %v", err)
+	}
+	defer response.Body.Close()
+
+	var release GithubReleaseVersion
+	if err := json.NewDecoder(response.Body).Decode(&release); err != nil {
+		return "", fmt.Errorf("Error occurred while decoding latest ytdlp version: %v", err)
+	}
+
+	return release.TagName, nil
+}
+
+func GetCurrentYtdlpVersion(ctx context.Context) (string, error) {
+	result, err := ytdlp.New().Version(ctx)
+	if err != nil {
+		return "", fmt.Errorf("Error occurred while fetching ytdlp version: %v", err)
+	}
+
+	// fmt.Printf("ytdlp version: %q\n", strings.Split(strings.Split(result.String(), " ")[2], "\n")[0])
+
+	return strings.Split(strings.Split(result.String(), " ")[2], "\n")[0], nil
 }

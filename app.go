@@ -48,12 +48,35 @@ type DebugInfo struct {
 
 	OS   string
 	Arch string
+
+	YtdlpVersion       string
+	LatestYtdlpVersion string
+	CanUpdateYtdlp     bool
+	FfmpegVersion      string
 }
 
 func (app *App) GetDebugInfo() DebugInfo {
 	toolFolder, err := tools.GetToolsFolder()
 	if err != nil {
-		fmt.Printf("Error occurred while getting tools folder: %v", err)
+		runtime.LogPrintf(app.ctx, "Error occurred while getting tools folder: %v", err)
+		return DebugInfo{}
+	}
+
+	ytdlpVersion, err := tools.GetCurrentYtdlpVersion(app.ctx)
+	if err != nil {
+		runtime.LogPrintf(app.ctx, "Error occurred while fetching ytdlp version: %v", err)
+		return DebugInfo{}
+	}
+
+	latestYtdlpVersion, err := tools.GetLatestYtdlpVersion()
+	if err != nil {
+		runtime.LogPrintf(app.ctx, "Error occurred while fetching latest ytdlp version: %v", err)
+		return DebugInfo{}
+	}
+
+	ffmpegVersion, err := tools.GetCurrentFfmpegVersion()
+	if err != nil {
+		runtime.LogPrintf(app.ctx, "Error occurred while fetching ffmpeg version: %v", err)
 		return DebugInfo{}
 	}
 
@@ -63,6 +86,11 @@ func (app *App) GetDebugInfo() DebugInfo {
 		ToolFolder: toolFolder,
 		OS:         rt.GOOS,
 		Arch:       rt.GOARCH,
+
+		YtdlpVersion:       ytdlpVersion,
+		LatestYtdlpVersion: latestYtdlpVersion,
+		CanUpdateYtdlp:     ytdlpVersion < latestYtdlpVersion,
+		FfmpegVersion:      ffmpegVersion,
 	}
 }
 
