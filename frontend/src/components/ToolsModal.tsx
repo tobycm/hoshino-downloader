@@ -9,7 +9,7 @@ import { tools } from "../utils/tools";
 export default function ToolsModal({ opened, onClose }: { opened: boolean; onClose: () => void }) {
   const toolPaths = useQuery({
     queryKey: ["GetToolPaths"],
-    queryFn: () => GetToolPaths(),
+    queryFn: GetToolPaths,
   });
 
   useEffect(() => {

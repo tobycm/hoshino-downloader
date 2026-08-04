@@ -10,6 +10,10 @@ export function GetDebugInfo() {
   return window['go']['main']['App']['GetDebugInfo']();
 }
 
+export function GetJobs() {
+  return window['go']['main']['App']['GetJobs']();
+}
+
 export function GetOutputFolder() {
   return window['go']['main']['App']['GetOutputFolder']();
 }
@@ -36,4 +40,8 @@ export function InstallFfmpeg() {
 
 export function InstallYtdlp() {
   return window['go']['main']['App']['InstallYtdlp']();
+}
+
+export function Test(arg1) {
+  return window['go']['main']['App']['Test'](arg1);
 }

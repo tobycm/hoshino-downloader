@@ -1,7 +1,8 @@
 import { Button, Code, Group, Modal, Stack, Title, Tooltip } from "@mantine/core";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { GetDebugInfo, GetUpdateInfo, InstallDeno, InstallFfmpeg, InstallYtdlp } from "../../wailsjs/go/main/App";
+import TestForm from "./TestForm";
 
 // TODO: default download options
 
@@ -10,7 +11,7 @@ export default function SettingsModal({ opened, onClose, openToolsModal }: { ope
 
   const debugInfo = useQuery({
     queryKey: ["GetDebugInfo"],
-    queryFn: () => GetDebugInfo(),
+    queryFn: GetDebugInfo,
   });
 
   useEffect(() => {
@@ -19,9 +20,11 @@ export default function SettingsModal({ opened, onClose, openToolsModal }: { ope
     debugInfo.refetch();
   }, [opened]);
 
+  const [testInfo, setTestInfo] = useState<any | null>(null);
+
   const updateInfo = useQuery({
     queryKey: ["GetUpdateInfo"],
-    queryFn: () => GetUpdateInfo(),
+    queryFn: GetUpdateInfo,
   });
 
   const installFfmpeg = useQuery({
@@ -89,13 +92,19 @@ export default function SettingsModal({ opened, onClose, openToolsModal }: { ope
           <Code block>{JSON.stringify(debugInfo.data, null, 2)}</Code>
         </Stack>
 
-        <Button
+        {/* <Button
           onClick={() => {
             onClose();
             openToolsModal?.();
           }}>
           Check for tools
-        </Button>
+        </Button> */}
+
+        <Stack>
+          <Title order={2}>Test</Title>
+          <TestForm onTestComplete={(data) => setTestInfo(data)} />
+          <Code block>{JSON.stringify(testInfo, null, 2)}</Code>
+        </Stack>
       </Stack>
     </Modal>
   );

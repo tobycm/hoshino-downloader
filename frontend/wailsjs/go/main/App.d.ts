@@ -7,6 +7,8 @@ export function Download(arg1:main.DownloadOptions):Promise<string>;
 
 export function GetDebugInfo():Promise<main.DebugInfo>;
 
+export function GetJobs():Promise<Array<main.Job>>;
+
 export function GetOutputFolder():Promise<string>;
 
 export function GetSensibleDownloadFolder():Promise<string>;
@@ -20,3 +22,5 @@ export function InstallDeno():Promise<string>;
 export function InstallFfmpeg():Promise<string>;
 
 export function InstallYtdlp():Promise<string>;
+
+export function Test(arg1:string):Promise<main.TestInfo>;

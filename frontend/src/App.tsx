@@ -12,6 +12,7 @@ import { useAppState } from "./states/app";
 
 import { IconSettings } from "@tabler/icons-react";
 import hoshino from "./assets/hoshino smol.jpg";
+import DownloadQueue from "./components/DownloadQueue";
 import SettingsModal from "./components/SettingsModal";
 import { tools } from "./utils/tools";
 
@@ -24,7 +25,7 @@ function App() {
   const setUrl = useAppState(useShallow((state) => state.setUrl));
   const toolPaths = useQuery({
     queryKey: ["GetToolPaths"],
-    queryFn: () => GetToolPaths(),
+    queryFn: GetToolPaths,
   });
 
   useEffect(() => {
@@ -49,7 +50,7 @@ function App() {
 
   const updateInfo = useQuery({
     queryKey: ["GetUpdateInfo"],
-    queryFn: () => GetUpdateInfo(),
+    queryFn: GetUpdateInfo,
   });
 
   useEffect(() => {
@@ -92,7 +93,7 @@ function App() {
         </Stack>
       </AppShell.Navbar>
       <AppShell.Main>
-        <Stack mih="100vh" pb="30vh" w="calc(100vw - 80px)" justify="center" align="center" c="white" ta="center">
+        <Stack mih="100vh" pt="12vh" pb="30vh" w="calc(100vw - 80px)" justify="center" align="center" c="white" ta="center">
           <DownloadModal opened={downloadModalOpened} onClose={downloadModalControls.close} />
           <ToolsModal opened={toolsModalOpened} onClose={toolsModalControls.close} />
           <SettingsModal opened={settingsModalOpened} onClose={settingsModalControls.close} openToolsModal={toolsModalControls.open} />
@@ -105,6 +106,8 @@ function App() {
               Download
             </Button>
           </Group>
+
+          <DownloadQueue />
         </Stack>
       </AppShell.Main>
     </AppShell>

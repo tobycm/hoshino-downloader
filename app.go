@@ -7,6 +7,7 @@ import (
 	"hoshino-downloader/utils"
 	"os"
 	rt "runtime"
+	"time"
 
 	"github.com/lrstanley/go-ytdlp"
 	"github.com/wailsapp/wails/v2/pkg/runtime"
@@ -175,12 +176,69 @@ type DownloadOptions struct {
 	DenoPath   string
 }
 
+type Job struct {
+	ID int
+
+	Progress *ytdlp.ProgressUpdate
+
+	Options  *DownloadOptions
+	Metadata *ytdlp.ExtractedInfo
+}
+
+var jobs = make([]*Job, 0, 30)
+
+func findJob(id int) *Job {
+	for _, job := range jobs {
+		if job.ID == id {
+			return job
+		}
+	}
+	return nil
+}
+
+var lastID = 0
+
+func (app *App) GetJobs() []*Job {
+	return jobs
+}
+
 func (app *App) Download(options DownloadOptions) string {
+	var myID = lastID + 1
+	lastID = myID
+
+	metadata := ytdlp.New().SkipDownload().PrintJSON()
+
+	metadataResult, err := metadata.Run(context.Background(), options.Url)
+	if err != nil {
+		runtime.LogPrintf(app.ctx, "Error occurred while fetching video info: %v", err)
+		return err.Error()
+	}
+
+	extractedMetadata, err := metadataResult.GetExtractedInfo()
+	if err != nil {
+		runtime.LogPrintf(app.ctx, "Error occurred while extracting video info: %v", err)
+		return err.Error()
+	}
+
+	jobs = append(jobs, &Job{
+		ID:       myID,
+		Options:  &options,
+		Metadata: extractedMetadata[0],
+	})
+
 	command := ytdlp.New().
 		SetExecutable(options.YtdlpPath).
 		Paths(options.OutputFolder).
 		Output("%(title)s [%(id)s].%(ext)s").
-		FFmpegLocation(options.FfmpegPath)
+		FFmpegLocation(options.FfmpegPath).
+		ProgressFunc(100*time.Millisecond, func(update ytdlp.ProgressUpdate) {
+			job := findJob(myID)
+			if job == nil {
+				return
+			}
+
+			job.Progress = &update
+		})
 
 	if options.RemuxVideo != "" {
 		command = command.RemuxVideo(options.RemuxVideo)
@@ -238,15 +296,39 @@ func (app *App) Download(options DownloadOptions) string {
 	runtime.LogPrintf(app.ctx, "Download Options: %v", options)
 	runtime.LogPrintf(app.ctx, "Yt-dlp command: %v", command.BuildCommand(app.ctx))
 
-	result, err := command.Run(context.Background(), options.Url)
+	go func() {
+		result, err := command.Run(context.Background(), options.Url)
+		if err != nil {
+			runtime.LogPrintf(app.ctx, "Error occurred while downloading: %v | Logs: %v", err, result.OutputLogs)
+		}
+
+		runtime.LogPrintf(app.ctx, "Download completed: %v", result.OutputLogs)
+	}()
+
+	runtime.LogPrintf(app.ctx, "Download started: %s", options.Url)
+
+	return fmt.Sprintf("Download started: %s", options.Url)
+}
+
+type TestInfo struct {
+	Info  ytdlp.ExtractedInfo
+	Error error
+}
+
+func (app *App) Test(url string) TestInfo {
+	command := ytdlp.New().SkipDownload().PrintJSON()
+
+	result, err := command.Run(context.Background(), url)
 	if err != nil {
-		runtime.LogPrintf(app.ctx, "Error occurred while downloading: %v | Logs: %v", err, result.OutputLogs)
-		return fmt.Sprintf("Error occurred while downloading: %v | Logs: %v", err, result.OutputLogs)
+		return TestInfo{Error: err}
 	}
 
-	runtime.LogPrintf(app.ctx, "Download completed: %v", result.OutputLogs)
+	info, err := result.GetExtractedInfo()
+	if err != nil {
+		return TestInfo{Error: err}
+	}
 
-	return fmt.Sprintf("Download completed: %v", result.OutputLogs)
+	return TestInfo{Info: *info[0]}
 }
 
 func (app *App) GetSensibleDownloadFolder() string {

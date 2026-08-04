@@ -54,12 +54,12 @@ export default function DownloadModal({ opened, onClose }: { opened: boolean; on
 
   const toolPaths = useQuery({
     queryKey: ["GetToolPaths"],
-    queryFn: () => GetToolPaths(),
+    queryFn: GetToolPaths,
   });
 
   const sensibleDownloadFolder = useQuery({
     queryKey: ["GetSensibleDownloadFolder"],
-    queryFn: () => GetSensibleDownloadFolder(),
+    queryFn: GetSensibleDownloadFolder,
   });
 
   useEffect(() => {
@@ -99,8 +99,11 @@ export default function DownloadModal({ opened, onClose }: { opened: boolean; on
   useEffect(() => {
     first.current = opened;
     if (opened) {
-      getClipboard.mutate();
-      form.setFieldValue("url", url);
+      getClipboard.mutateAsync().then(() => {
+        if (url) {
+          form.setFieldValue("url", url);
+        }
+      });
     }
 
     setShowMoreFormats(false);
@@ -118,7 +121,7 @@ export default function DownloadModal({ opened, onClose }: { opened: boolean; on
 
         EmbedChapters: values.embedChapters,
         EmbedThumbnail: values.embedThumbnail,
-        EmbedSubs: values.embedSubs,
+        EmbedSubs: downloadMode === "audio" ? false : values.embedSubs,
         EmbedMetadata: values.embedMetadata,
         CropSquareThumbnail: values.cropSquareThumbnail,
 
@@ -145,9 +148,11 @@ export default function DownloadModal({ opened, onClose }: { opened: boolean; on
     },
     onSuccess: () => {
       notifications.show({
-        title: "Download Completed",
-        message: "The download has been completed successfully.",
+        title: "Download started",
+        message: "The download has been started successfully.",
       });
+
+      onClose();
     },
     onError: (error) => {
       console.error("Download failed:", error);
