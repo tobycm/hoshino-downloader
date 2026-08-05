@@ -12,6 +12,7 @@ import {
   SegmentedControl,
   Stack,
   Switch,
+  Text,
   TextInput,
   useCombobox,
 } from "@mantine/core";
@@ -21,8 +22,10 @@ import { IconClipboard, IconFolderOpen } from "@tabler/icons-react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
 import { Download, GetOutputFolder, GetSensibleDownloadFolder, GetToolPaths } from "../../wailsjs/go/main/App";
+import type { main } from "../../wailsjs/go/models";
 import { ClipboardGetText } from "../../wailsjs/runtime";
 import { useAppState } from "../states/app";
+import { useSavedDownloadOptions } from "../states/download";
 import { audioFormats, audioQualities, videoFormats, videoQualities } from "../utils/constants";
 
 export default function DownloadModal({ opened, onClose }: { opened: boolean; onClose: () => void }) {
@@ -115,7 +118,7 @@ export default function DownloadModal({ opened, onClose }: { opened: boolean; on
         throw new Error("Tools not found");
       }
 
-      const payload: Parameters<typeof Download>[0] = {
+      const payload: main.DownloadOptions = {
         Url: values.url,
         OutputFolder: values.outputFolder,
 
@@ -130,13 +133,16 @@ export default function DownloadModal({ opened, onClose }: { opened: boolean; on
 
         ExtractAudio: downloadMode === "audio",
         AudioFormat: downloadMode === "audio" ? values.format : "",
-        AudioQuality: values.quality,
+        AudioQuality: downloadMode === "audio" ? values.quality : "",
         RemuxVideo: downloadMode === "audio" ? "" : values.format,
+        VideoQuality: downloadMode === "audio" ? "" : values.quality,
 
         YtdlpPath: toolPaths.data.ytdlp,
         FfmpegPath: toolPaths.data.ffmpeg,
         DenoPath: toolPaths.data.deno,
       };
+
+      savedDownloadOptions.save(payload);
 
       console.log(values);
 
@@ -184,6 +190,23 @@ export default function DownloadModal({ opened, onClose }: { opened: boolean; on
   useEffect(() => {
     form.setFieldValue("format", formats[0]);
   }, [downloadMode, opened]);
+
+  const savedDownloadOptions = useSavedDownloadOptions();
+
+  useEffect(() => {
+    if (opened) {
+      form.setValues({
+        outputFolder: savedDownloadOptions.OutputFolder,
+        format: downloadMode === "audio" ? savedDownloadOptions.AudioFormat : savedDownloadOptions.RemuxVideo,
+        quality: downloadMode === "audio" ? savedDownloadOptions.AudioQuality : savedDownloadOptions.VideoQuality,
+        embedChapters: savedDownloadOptions.EmbedChapters,
+        embedThumbnail: savedDownloadOptions.EmbedThumbnail,
+        embedSubs: savedDownloadOptions.EmbedSubs,
+        embedMetadata: savedDownloadOptions.EmbedMetadata,
+        cropSquareThumbnail: savedDownloadOptions.CropSquareThumbnail,
+      });
+    }
+  }, [opened]);
 
   return (
     <Modal opened={opened} onClose={onClose} title="Download" centered>
@@ -287,6 +310,10 @@ export default function DownloadModal({ opened, onClose }: { opened: boolean; on
           <Button disabled={download.isPending} type="submit" style={{ marginTop: "auto" }}>
             {download.isPending ? <Loader size="xs" /> : "Download"}
           </Button>
+
+          <Text size="xs" c="dimmed">
+            Your settings are saved for the next download!
+          </Text>
         </Stack>
       </form>
     </Modal>

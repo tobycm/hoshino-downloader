@@ -13,13 +13,8 @@ export const useAppState = create<AppState>()(
   persist(
     (set) => ({
       ...initial,
-      setUrl: (url: string) => set(() => ({ url })),
+      setUrl: (url) => set(() => ({ url })),
     }),
-    {
-      name: "hoshino-storage",
-      partialize: (state) => ({
-        url: state.url,
-      }),
-    },
+    { name: "hoshino-storage" },
   ),
 );

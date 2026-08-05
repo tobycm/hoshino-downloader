@@ -54,6 +54,7 @@ export namespace main {
 	    Url: string;
 	    OutputFolder: string;
 	    RemuxVideo: string;
+	    VideoQuality: string;
 	    ExtractAudio: boolean;
 	    AudioFormat: string;
 	    AudioQuality: string;
@@ -77,6 +78,7 @@ export namespace main {
 	        this.Url = source["Url"];
 	        this.OutputFolder = source["OutputFolder"];
 	        this.RemuxVideo = source["RemuxVideo"];
+	        this.VideoQuality = source["VideoQuality"];
 	        this.ExtractAudio = source["ExtractAudio"];
 	        this.AudioFormat = source["AudioFormat"];
 	        this.AudioQuality = source["AudioQuality"];

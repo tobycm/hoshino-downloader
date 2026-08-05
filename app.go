@@ -158,6 +158,7 @@ type DownloadOptions struct {
 	Url          string
 	OutputFolder string
 	RemuxVideo   string // format
+	VideoQuality string
 	ExtractAudio bool
 	AudioFormat  string
 	AudioQuality string
@@ -242,6 +243,10 @@ func (app *App) Download(options DownloadOptions) string {
 
 	if options.RemuxVideo != "" {
 		command = command.RemuxVideo(options.RemuxVideo)
+	}
+
+	if options.VideoQuality != "" {
+		command = command.Format(options.VideoQuality)
 	}
 
 	if options.AudioFormat != "" {

@@ -20,11 +20,7 @@ var (
 	downloadUrl = "https://dl.deno.land/release/v%s/deno-%s.zip"
 )
 
-// TODO: update tools
-// TODO: simplier tool download
-// TODO: progress
 // TODO: settings page
-// TODO: queue system
 
 // "Darwin x86_64") target="x86_64-apple-darwin" ;;
 // "Darwin arm64") target="aarch64-apple-darwin" ;;
