@@ -12,14 +12,15 @@ export default function DownloadCard({ job }: { job: main.Job }) {
   }
 
   return (
-    <Group w="100%" bg="gray.8" bdrs="md" h="120px" style={{ overflow: "clip", boxShadow: theme.shadows.md }}>
-      <Image src={job.Metadata?.thumbnail} w="auto" h="100%" />
-      <Stack flex={1} py="sm" gap={0} justify="space-between">
+    <Group w="100%" bg="gray.8" bdrs="md" style={{ overflow: "clip", boxShadow: theme.shadows.md }}>
+      <Image src={job.Progress?.info?.thumbnail} w="auto" h="100%" style={{ aspectRatio: 1 }} />
+      <Stack flex={1} py="sm" gap={0} justify="space-between" mr="sm">
         <Text fz="xl" ta="left">
-          {job.Metadata?.title}
+          {job.Progress?.info?.playlist_title && `${job.Progress?.info?.playlist_title} - `} {job.Progress?.info?.title}
         </Text>
         <Text fz="sm" ta="left">
-          {job.Metadata?.channel} {job.Metadata?.duration && `• ${secondsToTime(job.Metadata?.duration)}`}
+          {job.Progress?.info?.channel || job.Progress?.info?.uploader}{" "}
+          {job.Progress?.info?.duration && `• ${secondsToTime(job.Progress?.info?.duration)}`} #{job.Progress?.info?.playlist_index}
         </Text>
         <Text fz="sm" ta="left">
           Download from <a href={job.Options?.Url}>{job.Options?.Url}</a>

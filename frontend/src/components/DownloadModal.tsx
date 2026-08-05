@@ -14,6 +14,7 @@ import {
   Switch,
   Text,
   TextInput,
+  Tooltip,
   useCombobox,
 } from "@mantine/core";
 import { isNotEmpty, useForm } from "@mantine/form";
@@ -226,9 +227,11 @@ export default function DownloadModal({ opened, onClose }: { opened: boolean; on
           />
           <TextInput
             rightSection={
-              <ActionIcon disabled={getClipboard.isPending} onClick={() => getClipboard.mutate()}>
-                <IconClipboard />
-              </ActionIcon>
+              <Tooltip label="Paste from clipboard">
+                <ActionIcon disabled={getClipboard.isPending} onClick={() => getClipboard.mutate()}>
+                  <IconClipboard />
+                </ActionIcon>
+              </Tooltip>
             }
             disabled={getClipboard.isPending}
             label="URL"
@@ -243,9 +246,11 @@ export default function DownloadModal({ opened, onClose }: { opened: boolean; on
 
           <TextInput
             rightSection={
-              <ActionIcon disabled={getOutputFolder.isPending} onClick={() => getOutputFolder.mutate()}>
-                <IconFolderOpen />
-              </ActionIcon>
+              <Tooltip label="Browse">
+                <ActionIcon disabled={getOutputFolder.isPending} onClick={() => getOutputFolder.mutate()}>
+                  <IconFolderOpen />
+                </ActionIcon>
+              </Tooltip>
             }
             disabled={getOutputFolder.isPending}
             label="Output Folder"

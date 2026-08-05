@@ -96,9 +96,8 @@ export namespace main {
 	}
 	export class Job {
 	    ID: number;
-	    Progress?: ytdlp.ProgressUpdate;
 	    Options?: DownloadOptions;
-	    Metadata?: ytdlp.ExtractedInfo;
+	    Progress?: ytdlp.ProgressUpdate;
 	
 	    static createFrom(source: any = {}) {
 	        return new Job(source);
@@ -107,9 +106,8 @@ export namespace main {
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
 	        this.ID = source["ID"];
-	        this.Progress = this.convertValues(source["Progress"], ytdlp.ProgressUpdate);
 	        this.Options = this.convertValues(source["Options"], DownloadOptions);
-	        this.Metadata = this.convertValues(source["Metadata"], ytdlp.ExtractedInfo);
+	        this.Progress = this.convertValues(source["Progress"], ytdlp.ProgressUpdate);
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {

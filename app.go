@@ -180,10 +180,9 @@ type DownloadOptions struct {
 type Job struct {
 	ID int
 
-	Progress *ytdlp.ProgressUpdate
+	Options *DownloadOptions
 
-	Options  *DownloadOptions
-	Metadata *ytdlp.ExtractedInfo
+	Progress *ytdlp.ProgressUpdate
 }
 
 var jobs = make([]*Job, 0, 30)
@@ -209,6 +208,16 @@ func (app *App) Download(options DownloadOptions) string {
 
 	metadata := ytdlp.New().SkipDownload().PrintJSON()
 
+	if options.DownloadPlaylist {
+		metadata = metadata.YesPlaylist()
+	} else {
+		metadata = metadata.NoPlaylist()
+	}
+
+	if options.PlaylistRange != "" {
+		metadata = metadata.PlaylistItems(options.PlaylistRange)
+	}
+
 	metadataResult, err := metadata.Run(context.Background(), options.Url)
 	if err != nil {
 		runtime.LogPrintf(app.ctx, "Error occurred while fetching video info: %v", err)
@@ -221,10 +230,14 @@ func (app *App) Download(options DownloadOptions) string {
 		return err.Error()
 	}
 
+	// runtime.LogPrintf(app.ctx, "Playlist title: %s", *extractedMetadata[0])
+
 	jobs = append(jobs, &Job{
-		ID:       myID,
-		Options:  &options,
-		Metadata: extractedMetadata[0],
+		ID:      myID,
+		Options: &options,
+		Progress: &ytdlp.ProgressUpdate{
+			Info: extractedMetadata[0],
+		},
 	})
 
 	command := ytdlp.New().
