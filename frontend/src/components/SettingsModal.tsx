@@ -48,7 +48,7 @@ export default function SettingsModal({ opened, onClose, openToolsModal }: { ope
   const canUpdate = updateInfo.data?.CanUpdateYtdlp;
 
   return (
-    <Modal opened={opened} onClose={onClose} centered>
+    <Modal opened={opened} onClose={onClose} centered size="lg">
       <Stack gap="md" mih="60vh">
         <Title order={1}>Settings</Title>
         <Stack>

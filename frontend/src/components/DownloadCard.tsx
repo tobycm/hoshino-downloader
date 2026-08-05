@@ -1,8 +1,10 @@
-import { Group, Image, Progress, Stack, Text } from "@mantine/core";
+import { Group, Image, Progress, Stack, Text, useMantineTheme } from "@mantine/core";
 import { main } from "../../wailsjs/go/models";
 import { secondsToTime } from "../utils/time";
 
 export default function DownloadCard({ job }: { job: main.Job }) {
+  const theme = useMantineTheme();
+
   let progress = undefined;
 
   if (job.Progress?.downloaded_bytes && job.Progress?.total_bytes) {
@@ -10,7 +12,7 @@ export default function DownloadCard({ job }: { job: main.Job }) {
   }
 
   return (
-    <Group w="100%" bg="gray.8" bdrs="md" h="120px" style={{ overflow: "clip" }}>
+    <Group w="100%" bg="gray.8" bdrs="md" h="120px" style={{ overflow: "clip", boxShadow: theme.shadows.md }}>
       <Image src={job.Metadata?.thumbnail} w="auto" h="100%" />
       <Stack flex={1} py="sm" gap={0} justify="space-between">
         <Text fz="xl" ta="left">
@@ -20,7 +22,7 @@ export default function DownloadCard({ job }: { job: main.Job }) {
           {job.Metadata?.channel} {job.Metadata?.duration && `• ${secondsToTime(job.Metadata?.duration)}`}
         </Text>
         <Text fz="sm" ta="left">
-          Download from {job.Options?.Url}
+          Download from <a href={job.Options?.Url}>{job.Options?.Url}</a>
         </Text>
 
         <Group flex={1} justify="center">
