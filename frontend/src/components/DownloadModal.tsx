@@ -240,7 +240,7 @@ export default function DownloadModal({ opened, onClose }: { opened: boolean; on
           />
 
           <Group grow>
-            {form.values.url.includes("?list=") && <Switch label="Download Playlist" {...form.getInputProps("downloadPlaylist")} />}
+            {new URL(form.values.url).searchParams.get("list") && <Switch label="Download Playlist" {...form.getInputProps("downloadPlaylist")} />}
             {form.values.downloadPlaylist && <TextInput label="Playlist Range" {...form.getInputProps("playlistRange")} />}
           </Group>
 

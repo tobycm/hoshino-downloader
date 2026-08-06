@@ -1,4 +1,4 @@
-import { Stack } from "@mantine/core";
+import { Group } from "@mantine/core";
 import { useQuery } from "@tanstack/react-query";
 import { GetJobs } from "../../wailsjs/go/main/App";
 import DownloadCard from "./DownloadCard";
@@ -11,10 +11,10 @@ export default function DownloadQueue() {
   });
 
   return (
-    <Stack w="80%">
+    <Group w="80%">
       {jobs.data?.map((job) => (
         <DownloadCard job={job} />
       ))}
-    </Stack>
+    </Group>
   );
 }
