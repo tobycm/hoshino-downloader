@@ -124,6 +124,8 @@ func InstallDeno(ctx context.Context) error {
 		return fmt.Errorf("[install_deno] failed to seek in destination file: %w", err)
 	}
 
+	os.Remove(path.Join(toolsFolder, "deno"))
+
 	if err := extract.Unpack(ctx, toolsFolder, destinationFile, extract.NewConfig()); err != nil {
 		return fmt.Errorf("[install_deno] failed to unpack deno: %w", err)
 	}

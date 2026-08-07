@@ -191,6 +191,7 @@ export namespace tools {
 	    ytdlp: string;
 	    ffmpeg: string;
 	    deno: string;
+	    spotdl: string;
 	
 	    static createFrom(source: any = {}) {
 	        return new ToolPaths(source);
@@ -201,6 +202,7 @@ export namespace tools {
 	        this.ytdlp = source["ytdlp"];
 	        this.ffmpeg = source["ffmpeg"];
 	        this.deno = source["deno"];
+	        this.spotdl = source["spotdl"];
 	    }
 	}
 

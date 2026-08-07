@@ -42,3 +42,7 @@ func GetToolsFolder() (string, error) {
 
 	return folder, nil
 }
+
+type GithubReleaseVersion struct {
+	TagName string `json:"tag_name"`
+}

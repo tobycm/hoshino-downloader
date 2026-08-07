@@ -1,7 +1,6 @@
 package tools
 
 import (
-	"bytes"
 	"context"
 	"fmt"
 	"hoshino-downloader/utils"
@@ -143,16 +142,20 @@ func InstallFfprobe() error { // this is probably only for mac, as btbn builds i
 // https://evermeet.cx/ffmpeg/getrelease/ffprobe/zip
 
 func GetCurrentFfmpegVersion() (string, error) {
-	var output bytes.Buffer
+	exe := "ffmpeg"
 
-	command := exec.Command("ffmpeg", "-version")
-	command.Stdout = &output
+	if runtime.GOOS == "windows" {
+		exe += ".exe"
+	}
 
-	if err := command.Run(); err != nil {
+	command := exec.Command(exe, "-version")
+
+	output, err := command.Output()
+	if err != nil {
 		return "", fmt.Errorf("Error occurred while fetching ffmpeg version: %v", err)
 	}
 
 	// fmt.Printf("ffmpeg version: %s\n", strings.Split(strings.Split(output.String(), "\n")[0], " ")[2])
 
-	return strings.Split(strings.Split(output.String(), "\n")[0], " ")[2], nil
+	return strings.Split(strings.Split(string(output), "\n")[0], " ")[2], nil
 }

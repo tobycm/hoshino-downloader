@@ -209,6 +209,14 @@ export default function DownloadModal({ opened, onClose }: { opened: boolean; on
     }
   }, [opened]);
 
+  let parsedUrl: URL | undefined = undefined;
+
+  try {
+    parsedUrl = new URL(form.values.url);
+  } catch (error) {
+    console.error("Invalid URL:", error);
+  }
+
   return (
     <Modal opened={opened} onClose={onClose} title="Download" centered>
       <form
@@ -240,7 +248,7 @@ export default function DownloadModal({ opened, onClose }: { opened: boolean; on
           />
 
           <Group grow>
-            {new URL(form.values.url).searchParams.get("list") && <Switch label="Download Playlist" {...form.getInputProps("downloadPlaylist")} />}
+            {parsedUrl?.searchParams.get("list") && <Switch label="Download Playlist" {...form.getInputProps("downloadPlaylist")} />}
             {form.values.downloadPlaylist && <TextInput label="Playlist Range" {...form.getInputProps("playlistRange")} />}
           </Group>
 

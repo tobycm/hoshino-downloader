@@ -66,14 +66,6 @@ func InstallYtdlp() error {
 	return nil
 }
 
-func CheckForUpdateYtdlp() bool {
-	return false
-}
-
-type GithubReleaseVersion struct {
-	TagName string `json:"tag_name"`
-}
-
 func GetLatestYtdlpVersion() (string, error) {
 	url := "https://api.github.com/repos/yt-dlp/yt-dlp/releases/latest"
 

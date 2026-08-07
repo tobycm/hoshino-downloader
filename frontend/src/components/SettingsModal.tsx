@@ -45,7 +45,7 @@ export default function SettingsModal({ opened, onClose, openToolsModal }: { ope
     enabled: false,
   });
 
-  const canUpdate = updateInfo.data?.CanUpdateYtdlp;
+  const canUpdate = updateInfo.data?.CanUpdateYtdlp || updateInfo.data?.CanUpdateDeno;
 
   return (
     <Modal opened={opened} onClose={onClose} centered size="lg">
@@ -67,7 +67,7 @@ export default function SettingsModal({ opened, onClose, openToolsModal }: { ope
               <Button
                 disabled={updateInfo.isFetching || installFfmpeg.isLoading || installYtdlp.isLoading || installDeno.isLoading || !canUpdate}
                 onClick={async () => {
-                  if (!updateInfo.data?.CanUpdateYtdlp || !updateInfo.data?.CanUpdateDeno) return;
+                  if (!updateInfo.data?.CanUpdateYtdlp && !updateInfo.data?.CanUpdateDeno) return;
 
                   if (updateInfo.data?.CanUpdateDeno) {
                     await installDeno.refetch();
